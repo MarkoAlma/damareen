@@ -2584,9 +2584,8 @@ transition: 0.5s;
 
 .shiftedBal {
   position: absolute;
-  transform: scale(2.2);
     animation: shiftAnimationBal 0.7s ease-out forwards;
-        transform: scaleX(-1);
+        transform: scaleX(-1) scale(2.2);
 }
 
 .shiftedJobb {

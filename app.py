@@ -18,7 +18,7 @@ mostani_pakli = ""
 keszitett_fajl_neve = ""
 kapcsolo = ""
 #pontos_hely = r"C:\kapros"
-pontos_hely = r"D:\wtf\dusza\dusza 2"
+# pontos_hely = r"D:\wtf\dusza\dusza 2"
 full_uj_jatek = False
 mentesi_fajl_neve = ""
 jatekvilag_neve = ""
@@ -30,8 +30,8 @@ kazamata_elem = "normal"
 win = 0
 loss = 0
 
-if pontos_hely != "":
-    os.chdir(pontos_hely)
+# if pontos_hely != "":
+#     os.chdir(pontos_hely)
 
 def main():
     if len(sys.argv) == 1:
@@ -50,6 +50,7 @@ def run_ui():
 def run_automated_test(test_dir_path):
     global pontos_hely
     pontos_hely = Path(test_dir_path).resolve()
+    os.chdir(pontos_hely)
     global kapcsolo
     kapcsolo = "teszt"
 
