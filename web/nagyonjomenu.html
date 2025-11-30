@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            box-sizing: border-box;
+            margin: 0px;
+        }
+        body{
+            overflow: hidden;
+        }
+        .fomenu_scene{
+            background-image: url("./jobg2.png");
+            background-repeat: no-repeat;
+            background-size: cover;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            transition: transform 1.5s ease-in, opacity 1.45s ease-in;
+        }
+        .fomenu_scene .b_ujjatek{
+            position: absolute;
+            top: 28vh;
+            left: 19vw;
+            color: rgb(36, 19, 23);
+            font-size: 150px;
+            font-family: "pixelatedFont";
+            text-shadow: 3px 3px 0px rgb(100, 68, 54);
+            transition: all 0.5s ease;
+        }
+        .fomenu_scene .b_folytatas{
+            position: absolute;
+            top: 60.8vh;
+            left: 51.9vw;
+            color: rgb(47, 26, 15);
+            font-size: 40px;
+            transform: rotateZ(-8deg) rotateX(20deg) rotateY(-5deg);
+            font-family: "pixelatedFont";
+            font-style: italic;
+            text-shadow: 1px 1px 0px rgb(199, 167, 138);
+            transition: all 0.5s ease;
+        }
+        .fomenu_scene .b_vilag-letrehoz{
+            position: absolute;
+            top: 70vh;
+            left: 19vw;
+            color: rgb(36, 29, 30);
+            font-size: 75px;
+            transform: rotateZ(-11deg) rotateY(-10deg);
+            font-style: italic;
+            font-family: "pixelatedFont";
+            text-shadow: 2px 2px 0px rgb(126, 118, 109);
+            transition: all 0.5s ease;
+        }
+        .fomenu_scene .b_ujjatek:hover, .b_folytatas:hover, .b_vilag-letrehoz:hover{
+            cursor: pointer;
+            color: rgb(255, 254, 213);
+            text-shadow: 
+                0 0 10px rgb(186, 133, 90),
+                0 0 20px rgb(186, 133, 90),
+                0 0 40px rgb(186, 133, 90);
+        }
+
+        
+
+
+        
+
+        .ujjatek_scene{
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-image: url("./select_scene.png");
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 1.5s ease-in, opacity 1s ease-in;
+        }
+
+
+        .folytatas_scene{
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-image: url("./select_scene.png");
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 1.5s ease-in, opacity 1.45s ease-in;
+        }
+
+        .vilagselect_scene{
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-image: url("./select_scene.png");
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 1.5s ease-in, opacity 1.45s ease-in;
+        }
+
+        .Vilagkartya_scene{
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-image: url("./select_scene.png");
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 1.5s ease-in, opacity 1.45s ease-in;
+        }
+
+        .my_scene{
+            background: black;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .bg_zoomed{
+            transform-origin: 76vw 55vh;
+            transform: scale(5);
+            opacity: 0;
+        }
+
+        .bg_unzoomed{
+            transform-origin: 76vw 55vh;
+            transform: scale(1);
+            opacity: 1;
+            
+        }
+        .hidden{
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+        }
+
+        
+
+        .scene_reveal {
+            animation: fadeInScene 2s ease forwards;
+        }
+
+        .scene_disappear{
+            animation: fadeOutScene 1s ease forwards;
+        }
+
+        .kikapcsol{
+            display: none;
+        }
+
+        @keyframes fadeInScene {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        @keyframes fadeOutScene {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .my_scene .jatekok, .my_scene .mentesek{
+            width: 14vw;
+            height: 32vh;
+            position: absolute;
+            top: 35vh;
+            left: 23.5vw;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            flex-direction: row;
+            background-image: url("./card_bg.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            scale: 1.2;
+            padding-top: 5vh;
+            filter: drop-shadow(0 0 10px rgba(30, 255, 0, 0.9));
+            animation: pulseScale 2.5s ease-in-out infinite;
+        }
+
+        .my_scene .vilag-gomb{
+            min-width: 8vw;
+            height: 22vh;
+            padding: 1.3vh;
+            
+        }
+
+        
+
+        .my_scene .vissza{
+            background-image: url("./vissza_gomb.png");
+            width: 10vw;
+            height: 10vh;
+            background-size: contain;
+            background-repeat: no-repeat;
+            text-align: center;
+            padding-top: 2.9vh;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            transition: scale 0.5s ease;
+            filter: drop-shadow(0 0 10px rgba(212, 0, 255, 0.9));
+            animation: pulseScale 2.5s ease-in-out infinite;
+            
+        }
+        .my_scene .vissza:hover{
+            scale: 1.1;
+            cursor: pointer;
+        }
+        .my_scene .vissza:hover button{
+            letter-spacing: 2px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(200, 140, 255, 0.9);
+        }
+        .my_scene .vissza button{
+            border: none;
+            background: none;
+            font-size: 2vh;
+            color: #e3d1ff; /* halvány lila-fehér */
+            cursor: pointer;
+            position: relative;
+            padding: 0;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: letter-spacing 0.3s ease, color 0.3s ease;
+            font-family: "pixelatedFont";
+        }
+
+        /* világos lila glow */
+        .my_scene .vissza button {
+            text-shadow: 0 0 6px rgba(180, 120, 255, 0.6);
+        }
+
+        /* aláhúzás animáció sötét lila színben */
+        .my_scene .vissza button::after {
+            content: "";
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            border-radius: 3px;
+            transition: 0.4s ease;
+            transform: translateX(-50%);
+        }
+
+        .my_scene .vissza button:hover::after {
+            width: 80%;
+        }
+
+        .my_scene .folytat{
+            background-image: url("./folyt_gomb.png");
+            width: 11.2vw;
+            height: 11.2vh;
+            background-size: contain;
+            text-align: center;
+            padding-top: 4.2vh;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            transition: scale 0.5s ease;
+            filter: drop-shadow(0 0 10px rgba(0, 195, 255, 0.9));
+            animation: pulseScale 2.5s ease-in-out infinite;
+        }
+        .my_scene .folytat:hover{
+            scale: 1.1;
+            cursor: pointer;
+        }
+        .my_scene .folytat:hover button{
+            letter-spacing: 2px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(107, 176, 255, 0.9);
+        }
+        .my_scene .folytat button{
+            border: none;
+            background: none;
+            font-size: 2vh;
+            color: #d1ddff; /* halvány lila-fehér */
+            cursor: pointer;
+            position: relative;
+            padding: 0;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: letter-spacing 0.3s ease, color 0.3s ease;
+            font-family: "pixelatedFont";
+        }
+
+        /* világos lila glow */
+        .my_scene .folytat button {
+            text-shadow: 0 0 6px rgba(107, 176, 255, 0.6);
+        }
+
+        /* aláhúzás animáció sötét lila színben */
+        .my_scene .folytat button::after {
+            content: "";
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            border-radius: 3px;
+            transition: 0.4s ease;
+            transform: translateX(-50%);
+        }
+
+        .my_scene .folytat button:hover::after {
+            width: 80%;
+        }
+        
+        .my_scene .select_title{
+            font-size: 4vw;
+            letter-spacing: 0.3vw;
+            margin: 0px;
+            padding: 0px;
+            color: #ffffff;
+            background: linear-gradient(45deg, #ff6b6b, #f0e130, #4ecdc4, #1a535c);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: absolute;
+            top: 1vw;
+            left: 34.5vw;
+            filter: drop-shadow(0 0 10px rgba(255, 166, 0, 0.9));
+            font-family: "pixelatedFont";
+        }
+
+        .my_scene .jobbra,.my_scene .balra{
+            font-size: 150px;
+            font-family: "pixelatedFont";
+            color: white;
+        }
+        .my_scene .jobbra:hover,.my_scene .balra:hover{
+            text-shadow: 0 0 10px rgba(107, 176, 255, 0.9);
+            cursor: pointer;
+        }
+        .my_scene .jobbra{
+            position: absolute;
+            top: 45vh;
+            left: 43vw;
+            animation: hopRight 0.6s ease-in-out infinite;
+        }
+        .my_scene .jobbra img{
+            filter: drop-shadow(0 0 10px rgba(107, 176, 255, 0.5));
+            width: 6vw;
+            height: 8vh;
+        }
+        .my_scene .jobbra img:hover{
+            filter: drop-shadow(0 0 20px rgba(107, 176, 255, 0.9));
+            scale: 1.1;
+        }
+        .my_scene .jobbra img:active{
+            filter: drop-shadow(0 0 10px rgba(107, 176, 255, 0.9));
+            scale: 1.05;
+        }
+        
+        .my_scene .balra{
+            position: absolute;
+            top: 45vh;
+            left: 12vw;
+            animation: hopLeft 0.6s ease-in-out infinite;
+        }
+        .my_scene .balra img{
+            filter: drop-shadow(0 0 10px rgba(107, 176, 255, 0.5));
+            width: 6vw;
+            height: 8vh;
+            transform: rotateZ(180deg);
+        }
+        .my_scene .balra img:hover{
+            filter: drop-shadow(0 0 20px rgba(107, 176, 255, 0.9));
+            scale: 1.1;
+        }
+        .my_scene .balra img:active{
+            filter: drop-shadow(0 0 10px rgba(107, 176, 255, 0.9));
+            scale: 1.05;
+        }
+
+        @keyframes hopRight {
+            0% {
+                transform: translateX(0);
+            }
+            30% {
+                transform: translateX(8px);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+        @keyframes hopLeft {
+            0% {
+                transform: translateX(0);
+            }
+            30% {
+                transform: translateX(-8px);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .my_scene #saveName{
+            border: none;
+            background: transparent;
+            outline: none;
+            color: white;
+            font-size: 2vh;
+            position: absolute;
+            top: 13.2vh;
+            left: 20.5vw;
+            width: 20vw;
+            height: 8vh;
+            z-index: 3;
+            padding-left: 2vw;
+            font-family: "pixelatedFont";
+            filter: drop-shadow(0 0 10px rgb(107, 176, 255));
+        }
+
+        .my_scene #saveName:focus{
+            outline: none;
+        }
+
+        .my_scene .input_bg{
+            position: absolute;
+            top: 10vh;
+            left: 18.5vw;
+            width: 24vw;
+            height: 14vh;
+            filter: drop-shadow(2px 0 20px rgb(247, 0, 255));
+            z-index: 2;
+        }
+
+        .portal{
+            filter: drop-shadow(2px 0 10px rgba(107, 176, 255, 0.9));
+            position: absolute;
+            top: 37vh;
+            left: 20vw;
+            scale: 2.5;
+            z-index: 0;
+            width: 20vw;
+            height: 24vh;
+        }
+
+        .tuz{
+            position: absolute;
+            right: 5vw;
+            top: 9vh;
+            height: 22vh;
+            width: 9vw;
+            filter: drop-shadow(2px 0 20px rgba(255, 136, 0, 0.9));
+        }
+
+        .urlap_hatter{
+            position: absolute;
+            top: 30vh;
+            left: 20vw;
+            scale: 2;
+            filter: drop-shadow(2px 0 20px rgba(72, 255, 0, 0.9));
+            animation: pulseScale 2.5s infinite ease-in-out;
+        }
+
+        .urlap{
+            position: absolute;
+            top: 20vh;
+            left: 18vw;
+            height: 58vh;
+            width: 21.6vw;
+            padding: 2vh;
+            padding-top: 0;
+            color: rgb(41, 34, 35);
+            font-weight: bold;
+            font-size: 2.5vh;
+            font-family: "pixelatedFont";
+            text-shadow: 2px 2px 0px rgb(170, 163, 154);
+            display: flex;
+            flex-direction: column;
+            gap: 0.6vh;
+            scale: 0.9;
+            animation: pulseScale 2.5s infinite ease-in-out;
+        }
+
+        .urlap input{
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 12vw;
+            height: 4vh;
+            background-image: url("input_bg2.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            padding-left: 1vh;
+            padding-right: 1vh;
+            color: white;
+            font-family: "pixelatedFont";
+            font-size: 1.5vh;
+        }
+
+        .urlap input::placeholder{
+            color: white;
+            font-family: "pixelatedFont";
+        }
+
+        .urlap input:focus{
+            outline: none;
+            font-family: "pixelatedFont";
+        }
+
+        .urlap select,.urlap button {
+            font-family: "pixelatedFont";
+            font-size: 17px;
+            color: #f0f0f0; /* világos szöveg */
+            background-color: #3a3a3a; /* sötét háttér */
+            border: 2px solid #5a5a5a; /* halványabb szegély */
+            border-radius: 4px;
+            padding: 6px 10px;
+            margin: 4px 0;
+            box-shadow: inset 0 0 4px #000000; /* enyhe belső árnyék */
+            cursor: pointer;
+        }
+
+        /* Hover effekt */
+        .urlap select:hover,.urlap button:hover {
+            background-color: #4a4a4a;
+            border-color: #7a7a7a;
+        }
+        .urlap button:active {
+            background-color: #3b3b3b;
+        }
+
+        /* Fókusz effekt */
+        .urlap select:focus,.urlap button:focus {
+            outline: none;
+            border-color: #88847b; /* aranyszínű fókusz a "pixeles" feelinghez */
+            box-shadow: 0 0 5px #7e7a74;
+        }
+
+        /* Select dropdown nyíl stílus */
+        .urlap select {
+            -webkit-appearance: none; /* Chrome/Safari */
+            -moz-appearance: none; /* Firefox */
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23f0f0f0" height="12" viewBox="0 0 24 24" width="12" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 12px 12px;
+            width: 10vw;
+        }
+
+        .urlap .jutalomSelect{
+            width: 5.15vw;
+        }
+
+        /* Button specifikus stílus */
+        .urlap button {
+            width: 6vw;
+        }
+
+        .urlap option {
+            font-family: "pixelatedFont";
+            animation: pulseScale 2.5s ease-in-out infinite;
+        }
+
+        .nehez{
+            position: absolute;
+            top: 72vh;
+            left: 16.5vw;
+            text-align: center;
+            padding: 2vh;
+            font-family: "pixelatedFont";
+            font-size: 2vh;
+            color: cyan;
+            text-shadow: 0 0 20px rgb(204, 0, 255);
+        }
+
+        #nehezseg {
+            -webkit-appearance: none;
+            width: 250px;
+            height: 12px;
+            background: transparent;
+            margin-left: 6vh;
+            margin-right: 6vh;
+            scale: 1.5;
+        }
+
+        /* TRACK */
+        #nehezseg::-webkit-slider-runnable-track {
+            height: 12px;
+            background: #3a3a3a; /* sötét fantasy panel */
+            border: 3px solid #2a2a2a;
+            border-radius: 4px;
+
+            /* enyhe, piszkos belső árnyék */
+            box-shadow:
+                inset 0 0 3px #000,
+                inset 0 0 8px rgba(0,0,0,0.8);
+        }
+
+        /* PIXEL-FANTASY THUMB */
+        #nehezseg::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+
+            /* fakó zöld – illik a portál keretéhez, nem neon */
+            background: #6d8f4e;
+            border: 3px solid #3b4a2e; 
+            border-radius: 2px;
+
+            /* kemény pixel shadow */
+            box-shadow:
+                2px 2px 0px #1c1c1c,
+                -1px -1px 0px #2f2f2f;
+
+            cursor: pointer;
+            margin-top: -5px;
+        }
+
+        /* Hover (picit világosabb, de NEM neon) */
+        #nehezseg:hover::-webkit-slider-thumb {
+            background: #7fa95a;
+        }
+
+        /* Firefox */
+        #nehezseg::-moz-range-track {
+            height: 12px;
+            background: #3a3a3a;
+            border: 3px solid #2a2a2a;
+            border-radius: 4px;
+            box-shadow: inset 0 0 3px #000, inset 0 0 8px rgba(0,0,0,0.8);
+        }
+
+        #nehezseg::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #6d8f4e;
+            border: 3px solid #3b4a2e;
+            border-radius: 2px;
+
+            box-shadow:
+                2px 2px 0px #1c1c1c,
+                -1px -1px 0px #2f2f2f;
+
+            cursor: pointer;
+        }
+
+
+        .popup {
+            display: none; /* alapból nem látszik */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(3px);
+            justify-content: center;
+            align-items: center;
+            font-family: "pixelatedFont";
+        }
+
+        /* A popup doboz */
+        .popup-content {
+            background: #222;
+            padding: 20px;
+            border-radius: 8px;
+            color: white;
+            width: 30vw;
+            height: 73vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            animation: pop 0.2s ease-out;
+        }
+
+        /* animáció */
+        @keyframes pop {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Bezárás ikon */
+        .close {
+            float: right;
+            font-size: 40px;
+            cursor: pointer;
+        }
+
+        .popup-content {
+            background: #1b1b1b;
+            border: 3px solid #8b5cf6; /* lila fantasy pixel keret */
+            padding: 16px;
+        }
+
+        .popup-content h1 {
+            font-size: 35px;
+            margin-bottom: 35px;
+            color: #d8caff;
+            text-shadow: 0 0 4px #000;
+        }
+
+        .currentVilag {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            font-size: 25px;
+        }
+
+        .currentVilag p {
+            color: #cfcfcf;
+            margin: 0;
+        }
+
+        .currentVilag div {
+            margin-left: 6px;
+            display: flex;
+            flex-direction: column;
+            padding: 0.8vh;
+            gap: 1vh;
+        }
+
+        .currentkazamatak{
+            max-height: 24vh;
+            height: 24vh;
+            overflow-y: scroll;
+            scrollbar-width: none;
+            font-size: 20px;
+        }
+
+        .currentgyujtemeny{
+            max-height: 23vh;
+            height: 23vh;
+            overflow-y: scroll;
+            scrollbar-width: none;
+            font-size: 20px;
+        }
+
+        .currentVilag .kistegla {
+            display: flex;
+            flex-direction: column;
+            align-content: center;
+            justify-content: center;
+            padding: 4px 8px;
+            margin: 4px 0;
+            min-height: 10vh;
+            background: #2e2e2e;      
+            border: 3px solid #4a4a4a;             
+            border-radius: 4px;
+
+            font-family: "pixelatedFont", monospace;
+            color: #d5d5d5;                        
+            text-shadow: 0 1px 0 #000;            
+
+            box-shadow: inset 0 0 6px #0008,       
+                        0 0 4px #0006;     
+
+            letter-spacing: 1px;
+        }
+        .currentVilag .kistegla:hover{
+            box-shadow: 0px 0px 10px rgb(255, 0, 0);
+            border: none;
+            border-radius: 7px;
+            scale: 1.02;
+            cursor: pointer;
+        }
+
+        .currentVilag .gyujtemenytegla{
+            min-height: 6vh;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+        }
+
+        .status{
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            color: rgb(110, 255, 110);
+            margin-top: 1vh;
+            text-shadow: 0px 0px 10px lime;
+            font-size: 1.8vh;
+        }
+
+        .kapcsolo{
+            position: absolute;
+            top: 80vh;
+            left: 29vw;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* The slider */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgb(4, 236, 252);
+            filter: drop-shadow(0 0 10px rgb(4, 236, 252));
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: rgb(255, 255, 255);
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: rgb(206, 2, 234);
+            filter: drop-shadow(0 0 10px rgb(206, 2, 234));
+        }
+
+        input:checked + .slider::before {
+            background-color: #ffffff;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        .alapmod, .komolymod{
+            color: white;
+            font-size: 2vh;
+            font-family: "pixelatedFont";
+            position: absolute;
+            top: 80vh;
+            left: 24vw;
+            color: rgb(4, 236, 252);
+            text-shadow: 0 0 20px rgb(206, 2, 234);
+            transition: all 0.2s ease-in;
+        }
+
+        .komolymod{
+            left: 32.5vw;
+            opacity: 0;
+            color: rgb(206, 2, 234);
+            text-shadow: 0 0 20px rgb(4, 236, 252);
+        }
+
+        @keyframes pulseScale {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02); 
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @font-face {
+            font-family: "pixelatedFont";
+            src: url("./Jersey20-Regular.ttf") format("truetype");
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="my_scene ">
+        <div class="fomenu_scene bg_unzoomed ">
+            <div class="b_ujjatek" onclick="Vilagok('ujjatek')">Új Játék</div>
+            <div class="b_folytatas" onclick="Vilagok('folytatas')">Folytatás</div>
+            <div class="b_vilag-letrehoz" onclick="Vilagok('vilag')">Világ létrehozása</div>
+        </div>
+
+        <div class="ujjatek_scene kikapcsol bg_unzoomed">
+            <h1 class="select_title">Világ Kiválasztása</h1>
+            <input type="text" id="saveName" placeholder="Mentés neve:">
+            <img src="./input_bg.png" alt="" class="input_bg">
+            <img src="./fire.gif" alt="" class="tuz">
+            <img src="./teszt3.gif" alt="" class="portal">
+            <div class="balra" onclick="handleVilagChange('bal')"><img src="./energy_arrow.png" alt=""></div>
+            <div class="jobbra" onclick="handleVilagChange('jobb')"><img src="./energy_arrow.png" alt=""></div>
+            <div class="jatekok">
+                
+            </div>
+            <div class="nehez">
+                <label for="nehezseg">Nehézség:</label>
+                <input type="range" value="0" min="0" max="10" id="nehezseg" oninput="HandleNehezseg(this.value)">
+                <label class="nehezsegSzin" for="nehezseg">0</label>
+            </div>
+            <div class="alapmod">Alap mód</div>
+            <div class="kapcsolo">
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round" onclick="HandleJatekmodChange()"></span>
+                </label>
+            </div>
+            <div class="komolymod">Javasolt mód</div>
+            <div class="folytat" onclick="CreateWorld('ujjatek')">
+                <button>Folytatás</button>
+            </div>
+            <div class="vissza" onclick="VisszaLepes('ujjatek')">
+                <button>Vissza</button>
+            </div>
+        </div>
+
+        <div class="folytatas_scene kikapcsol bg_unzoomed">
+            <h1 class="select_title">Játékmenet Betöltése</h1>
+            <img src="./fire.gif" alt="" class="tuz">
+            <img src="./teszt3.gif" alt="" class="portal">
+            <div class="balra"><img src="./energy_arrow.png" alt=""></div>
+            <div class="jobbra"><img src="./energy_arrow.png" alt=""></div>
+            <div class="mentesek">
+                <div class="vilag-gomb" style="cursor:pointer">
+                        <p>${mentes.mentesi_nev}</p>
+                        <p>Utolsó mentés: ${mentes.idopont}</p>
+                    </div>
+            </div>
+            <div class="folytat" onclick="CreateWorld('folytatas')">
+                <button>Folytatás</button>
+            </div>
+            <div class="vissza" onclick="VisszaLepes('folytatas')">
+                <button>Vissza</button>
+            </div>
+        </div>
+
+        <div class="vilagselect_scene kikapcsol bg_unzoomed ">
+            <h1 class="select_title">Világ Létrehozása</h1>
+            <img src="./urlap_hatter.png" alt="" class="urlap_hatter">
+            <div class="urlap">
+                <div>
+                    <h3>Világ beállításai</h3>
+                    <input type="text" placeholder="Világ neve: " oninput="HozzaadasVilag('nev')" class="vilagnev">
+                </div>
+                <div>
+                    <h3>Játékos gyűjtemény kártyái: </h3>
+                    <select name="" id="" class="gyujtemenySelect">
+                        <option value="Nerun">20⚔️ Nerun 12❤️</option>
+                        <option value="Aragorn">10⚔️ Aragorn 32❤️</option>
+                        <option value="Selia">15⚔️ Selia 2❤️</option>
+                        <option value="Selia3">⚔️15 Selia 3❤️</option>
+                        <option value="Selia4">⚔️15 Selia 4❤️</option>
+                        <option value="Selia5">⚔️15 Selia 5❤️</option>
+                        <option value="Selia6">⚔️15 Selia 6❤️</option>
+                        <option value="Selia7">⚔️15 Selia 7❤️</option>
+                    </select> 
+                    <button onclick="HozzaadasVilag('gyujtemeny')">Hozzáadás</button>
+                </div>
+                <div>
+                    <h3>Kazamata hozzáadása</h3>
+                    <input type="text" placeholder="Kazamata neve: " class="kazamatanev"> <br>
+                    <label for="tipus_select">Kazamata Típusa: </label>
+                    <select name="" id="tipus_select" class="tipusSelect" onchange="EllenfelekSlotok(event.target.value)">
+                        <option value="egyszeru">Egyszerű</option>
+                        <option value="kis">Kis</option>
+                        <option value="nagy">Nagy</option>
+                    </select>
+                    <div class="kartyakSelect">
+                        <p>Kártya kiválasztása: </p><select name="" class="kazamataKartya1">
+                            <option value="Nerun">20⚔️ Nerun 12❤️</option>
+                            <option value="Aragorn">10⚔️ Aragorn 32❤️</option>
+                            <option value="Selia">15⚔️ Selia 2❤️</option>
+                        </select>
+                    </div>
+                    <div class="jutalmak">
+                        <label for="tipus_select">Jutalom: </label>
+                        <select name="" class="jutalomSelect">
+                            <option value="sebzes">Sebzés</option>
+                            <option value="eletero">Életerő</option>
+                        </select>
+                    </div>
+                    <button onclick="HozzaadasVilag('kazamata')">Hozzáadás</button>
+                    <button id="openPopup">Megnyitás</button>
+                    </div>
+                    <div class="status"></div>
+                </div>
+                <img src="./fire.gif" alt="" class="tuz">
+                <div class="vissza" onclick="VisszaLepes('vilag')">
+                    <button>Vissza</button>
+                </div>
+                <div class="folytat" onclick="VilagkartyakScene()">
+                    <button>Világkártyák</button>
+                </div>
+                
+        </div>
+
+        <div class="Vilagkartya_scene bg_unzoomed kikapcsol">
+            <img src="./fire.gif" alt="" class="tuz">
+            <div class="vissza" onclick="VilagCreateScene()">
+                <button>Vissza</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    
+
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span id="closePopup" class="close">&times;</span>
+            <h1>A világ jelenlegi statisztikái</h1>
+                <div class="currentVilag">
+                    <p style="margin-bottom: 3vh;">Név: <span class="currentnev"></span></p>
+                    <p>Játékos gyűjtemény: <div class="currentgyujtemeny"></div></p>
+                    <p>Kazamaták: <div class="currentkazamatak"></div></p>
+                </div>
+        </div>
+    </div>
+    
+</body>
+<script>
+
+    const fomenu_scene = document.querySelector('.fomenu_scene');
+    const jatekScene = document.querySelector('.ujjatek_scene');
+    const mentesScene = document.querySelector('.folytatas_scene');
+    const VilagScene = document.querySelector(".vilagselect_scene")
+    const VilagkartyaScene = document.querySelector(".Vilagkartya_scene")
+
+    const zoom_sound = new Audio("./hangeffektek/zoom.mp3")
+    const zoom_out_sound = new Audio("./hangeffektek/zoom_out.mp3")
+    const magic_gomb_sound = new Audio("./hangeffektek/magic_gomb.mp3")
+    const fire_lightup_sound = new Audio("./hangeffektek/torch_lightup.mp3")
+    const fire_loop_sound = new Audio("./hangeffektek/torch_loop.mp3")
+    const portal_sound = new Audio("./hangeffektek/portal.mp3")
+
+    function Zoom(){
+        zoom_sound.play();
+        fomenu_scene.classList.remove("bg_unzoomed")
+        fomenu_scene.classList.add('bg_zoomed');
+    }
+
+    function unZoom(){
+        fomenu_scene.classList.remove('bg_zoomed');
+        fomenu_scene.classList.add("bg_unzoomed")
+    }
+
+
+    function Vilagok(opcio) {
+        if (opcio == 'ujjatek') {
+            Zoom()
+            setTimeout(() => {
+                fomenu_scene.classList.add("kikapcsol")
+                jatekScene.classList.remove("scene_disappear")
+                
+                jatekScene.classList.remove("kikapcsol")
+                jatekScene.classList.add('scene_reveal')
+                fire_lightup_sound.play()
+                fire_lightup_sound.currentTime = 0;
+                fire_loop_sound.play()
+                fire_loop_sound.currentTime = 0;
+                fire_loop_sound.loop = true
+                portal_sound.play()
+                portal_sound.currentTime = 0;
+                portal_sound.loop = true
+            }, 1400);
+        }
+        else if (opcio == 'folytatas') {
+            Zoom()
+            setTimeout(() => {
+                fomenu_scene.classList.add("kikapcsol")
+                mentesScene.classList.remove("scene_disappear")
+                
+                mentesScene.classList.remove("kikapcsol")
+                mentesScene.classList.add('scene_reveal')
+                fire_lightup_sound.play()
+                fire_lightup_sound.currentTime = 0;
+                fire_loop_sound.play()
+                fire_loop_sound.currentTime = 0;
+                fire_loop_sound.loop = true
+                portal_sound.play()
+                portal_sound.currentTime = 0;
+                portal_sound.loop = true
+            }, 1400);
+        }else if (opcio == 'vilag') {
+            Zoom()
+            setTimeout(() => {
+                fomenu_scene.classList.add("kikapcsol")
+                VilagScene.classList.remove("scene_disappear")
+                
+                VilagScene.classList.remove("kikapcsol")
+                VilagScene.classList.add('scene_reveal')
+                fire_lightup_sound.play()
+                fire_lightup_sound.currentTime = 0;
+                fire_loop_sound.play()
+                fire_loop_sound.currentTime = 0;
+                fire_loop_sound.loop = true
+                portal_sound.play()
+                portal_sound.currentTime = 0;
+                portal_sound.loop = true
+            }, 1400);
+        }
+    } 
+
+
+
+    function VisszaLepes(opcio) {
+        portal_sound.loop = false;  
+        portal_sound.pause();        
+        portal_sound.currentTime = 0; 
+        fire_loop_sound.loop = false;
+        fire_loop_sound.pause();     
+        fire_loop_sound.currentTime = 0;
+        zoom_out_sound.play()
+        if(opcio == 'ujjatek'){
+            jatekScene.classList.remove("scene_reveal")
+            jatekScene.classList.add("scene_disappear")
+            setTimeout(() => {
+                jatekScene.classList.add("kikapcsol")
+                fomenu_scene.classList.remove("kikapcsol")
+                setTimeout(() => {
+                    unZoom()
+                }, 200);    
+            }, 500);
+        }
+        else if(opcio  == 'folytatas'){
+            mentesScene.classList.remove("scene_reveal")
+            mentesScene.classList.add("scene_disappear")
+            setTimeout(() => {
+                mentesScene.classList.add("kikapcsol")
+                fomenu_scene.classList.remove("kikapcsol")
+                setTimeout(() => {
+                    unZoom()
+                }, 200);    
+            }, 500);
+        }else if(opcio  == 'vilag'){
+            VilagScene.classList.remove("scene_reveal")
+            VilagScene.classList.add("scene_disappear")
+            setTimeout(() => {
+                VilagScene.classList.add("kikapcsol")
+                fomenu_scene.classList.remove("kikapcsol")
+                setTimeout(() => {
+                    unZoom()
+                }, 200);    
+            }, 500);
+        }
+    }
+
+    let vilagTomb = [
+        {vilagnev:"kaki", kartyak:23},
+        {vilagnev:"vilag", kartyak:5},
+        {vilagnev:"vilag2", kartyak:100},
+        {vilagnev:"kukorica", kartyak:40},
+        {vilagnev:"42", kartyak:15},
+    ]
+    let currentIndex = 0;
+    function handleVilagChange(irany){
+        magic_gomb_sound.currentTime = 0; 
+        magic_gomb_sound.play()
+        if(irany == "jobb" && currentIndex < vilagTomb.length){
+            currentIndex++;
+        }else if (irany == "bal" && currentIndex > 0){
+            currentIndex--;
+        }
+        document.querySelector(".jatekok").innerHTML = `
+        <div class="vilag-gomb" style="cursor:pointer">
+                    <p>${vilagTomb[currentIndex].vilagnev}</p>
+                    <p>${vilagTomb[currentIndex].kartyak}</p>
+                </div>`
+    }
+    handleVilagChange()
+
+
+    let alapmod = true;
+
+    let alap = document.querySelector(".alapmod")
+    let komoly = document.querySelector(".komolymod")
+    function HandleJatekmodChange(){
+        if(!alapmod){
+            komoly.style.opacity = 0
+            alap.style.opacity = 1
+            alapmod = true
+        }else{
+            komoly.style.opacity = 1
+            alap.style.opacity = 0
+            alapmod = false
+        }
+    }
+
+
+    function CreateWorld(opcio){
+        zoom_sound.play();
+        if(opcio == 'ujjatek'){
+            jatekScene.classList.remove("bg_unzoomed")
+            jatekScene.classList.remove("scene_reveal")
+            jatekScene.classList.add('bg_zoomed');
+            jatekScene.classList.add('scene_disappear');
+            setTimeout(() => {
+                jatekScene.classList.add('kikapcsol');
+            }, 1000);
+
+            setTimeout(() => {
+                BackToSelect('ujjatek')
+            }, 2000);
+        }else if(opcio == 'folytatas'){
+            mentesScene.classList.remove("bg_unzoomed")
+            mentesScene.classList.remove("scene_reveal")
+            mentesScene.classList.add('bg_zoomed');
+            mentesScene.classList.add('scene_disappear');
+            setTimeout(() => {
+                mentesScene.classList.add('kikapcsol');
+            }, 1000);
+
+            setTimeout(() => {
+                BackToSelect('folytatas')
+            }, 2000);
+        }else if(opcio == 'vilag'){
+            VilagScene.classList.remove("bg_unzoomed")
+            VilagScene.classList.remove("scene_reveal")
+            VilagScene.classList.add('bg_zoomed');
+            VilagScene.classList.add('scene_disappear');
+            setTimeout(() => {
+                VilagScene.classList.add('kikapcsol');
+            }, 1000);
+        }
+    }
+
+    function VilagkartyakScene(){
+        CreateWorld('vilag')
+        VilagkartyaScene.classList.remove("scene_disappear")
+        VilagkartyaScene.classList.remove("kikapcsol")
+        VilagkartyaScene.classList.add("scene_reveal")
+    }
+
+    function VilagCreateScene(){
+        VilagkartyaScene.classList.add("scene_disappear")
+        setTimeout(() => {
+            VilagkartyaScene.classList.add("kikapcsol")
+            VilagkartyaScene.classList.remove("scene_reveal")
+        }, 1000);
+        BackToSelect('vilag')
+    }
+
+    function BackToSelect(opcio){
+        zoom_out_sound.play()
+        if(opcio == 'ujjatek'){
+            jatekScene.classList.add("scene_reveal")
+            jatekScene.classList.add("bg_unzoomed")
+            jatekScene.classList.remove('bg_zoomed');
+            jatekScene.classList.remove('scene_disappear');
+            setTimeout(() => {
+                jatekScene.classList.remove("kikapcsol")
+            }, 2000);
+        }else if(opcio == 'folytatas'){
+            mentesScene.classList.add("scene_reveal")
+            mentesScene.classList.add("bg_unzoomed")
+            mentesScene.classList.remove('bg_zoomed');
+            mentesScene.classList.remove('scene_disappear');
+            setTimeout(() => {
+                mentesScene.classList.remove("kikapcsol")
+            }, 2000);
+        }else if(opcio == 'vilag'){
+            VilagScene.classList.add("scene_reveal")
+            VilagScene.classList.add("bg_unzoomed")
+            VilagScene.classList.remove('bg_zoomed');
+            VilagScene.classList.remove('scene_disappear');
+            setTimeout(() => {
+                VilagScene.classList.remove("kikapcsol")
+            }, 2000);
+        }
+    }
+
+    function EllenfelekSlotok(tipus){
+        let kartyak = document.querySelector(".kartyakSelect")
+        let jutalmak = document.querySelector(".jutalmak")
+        if(tipus == 'egyszeru'){
+            kartyak.innerHTML = `<p>Kártya kiválasztása: </p><select name="" class="kazamataKartya1"><option value="Nerun">⚔️20 Nerun 12❤️</option>
+                        <option value="Aragorn">⚔️10 Aragorn 32❤️</option>
+                        <option value="Selia">⚔️15 Selia 2❤️</option></select>`
+            jutalmak.innerHTML = '<label for="tipus_select">Jutalom: </label><select name="" id="tipus_select" class="jutalomSelect"><option value="sebzes">Sebzés</option><option value="eletero">Életerő</option></select>'
+        }else if(tipus == 'kis'){
+            kartyak.innerHTML = `
+            <p>Kártyák kiválasztása: </p>
+            <select name="" class="kazamataKartya1"><option value="Nerun">20⚔️ Nerun 12❤️</option>
+                        <option value="Aragorn">10⚔️ Aragorn 32❤️</option>
+                        <option value="Selia">15⚔️ Selia 2❤️</option></select>
+            <select name="" class="kazamataKartya2"><option value="Nerun">20⚔️ Nerun 12❤️</option>
+                        <option value="Aragorn">10⚔️ Aragorn 32❤️</option>
+                        <option value="Selia">15⚔️ Selia 2❤️</option></select>
+            <select name="" class="kazamataKartya3"><option value="Nerun">20⚔️ Nerun 12❤️</option>
+                        <option value="Aragorn">10⚔️ Aragorn 32❤️</option>
+                        <option value="Selia">15⚔️ Selia 2❤️</option></select>
+            <p>Vezér kártya kiválasztása: </p>
+            <select name="" class="vezerkartya_select"><option value="LordNerun">20⚔️ Lord Nerun 12❤️</option>
+                        <option value="KakaAragorn">10⚔️ Kaka Aragorn 32❤️</option>
+                        <option value="PriestessSelia">15⚔️ Priestess Selia 2❤️</option></select>`
+            jutalmak.innerHTML = '<label for="tipus_select">Jutalom: </label><select name="" id="tipus_select" class="jutalomSelect"><option value="sebzes">Sebzés</option><option value="eletero">Életerő</option></select>'
+        }else if(tipus == 'nagy'){
+            kartyak.innerHTML = `
+            <p>Kártyák kiválasztása: </p>
+            <select name="" class="kazamataKartya1"><option value="Nerun">20⚔️ Nerun 12❤️</option>
+                        <option value="Aragorn">10⚔️ Aragorn 32❤️</option>
+                        <option value="Selia">15⚔️ Selia 2❤️</option><option value="Selia2">15⚔️ Selia2 2❤️</option></select>
+            <select name="" class="kazamataKartya2"><option value="Nerun">20⚔️ Nerun 12❤️</option>
+                        <option value="Aragorn">10⚔️ Aragorn 32❤️</option>
+                        <option value="Selia">15⚔️ Selia 2❤️</option></select>
+            <select name="" class="kazamataKartya3"><option value="Nerun">20⚔️ Nerun 12❤️</option>
+                        <option value="Aragorn">10⚔️ Aragorn 32❤️</option>
+                        <option value="Selia">15⚔️ Selia 2❤️</option></select>
+            <select name="" class="kazamataKartya4"><option value="Nerun">20⚔️ Nerun 12❤️</option>
+                        <option value="Aragorn">10⚔️ Aragorn 32❤️</option>
+                        <option value="Selia">15⚔️ Selia 2❤️</option></select>
+            <select name="" class="kazamataKartya5"><option value="Nerun">20⚔️ Nerun 12❤️</option>
+                        <option value="Aragorn">10⚔️ Aragorn 32❤️</option>
+                        <option value="Selia">15⚔️ Selia 2❤️</option><option value="Selia3">15⚔️ Selia3 2❤️</option></select>
+            <p>Vezér kártya kiválasztása: </p>
+            <select name="" class="vezerkartya_select"><option value="LordNerun">20⚔️ Lord Nerun 12❤️</option>
+                        <option value="KakaAragorn">10⚔️ Kaka Aragorn 32❤️</option>
+                        <option value="PriestessSelia">15⚔️ Priestess Selia 2❤️</option></select>`
+            jutalmak.innerHTML = ""
+        }
+        
+    }
+
+    let currentgyujtemeny = []
+
+    let currentKazamatak = []
+    let currentKazamataKartyak = []
+
+    let nev = document.querySelector(".currentnev")
+    let gyujtemeny = document.querySelector(".currentgyujtemeny")
+    let kazamata = document.querySelector(".currentkazamatak")
+
+    let nextId = 0
+
+    function HozzaadasVilag(mit){
+        let status = document.querySelector(".status")
+
+        if(mit == 'nev'){
+            nev.innerHTML = `<span>${document.querySelector(".vilagnev").value}</span>`
+        }else if(mit == 'gyujtemeny'){
+            let select = document.querySelector('.gyujtemenySelect');
+            let value = select.options[select.selectedIndex].innerHTML;
+            let value2 = select.options[select.selectedIndex].value;
+            let ujKartya = {
+                    nev:value2,
+                    html:value
+            }
+            const alreadyExists = currentgyujtemeny.some(k =>
+                JSON.stringify(k) === JSON.stringify(ujKartya)
+            );
+            if(!alreadyExists){
+                currentgyujtemeny.push(ujKartya)
+                gyujtemeny.innerHTML = ""
+                gyujtemeny.innerHTML += currentgyujtemeny.map(x => `<span class="kistegla gyujtemenytegla" onclick="TorolCurrentKartya('${x.nev}')">${x.html}</span>`).join("")
+                
+                status.innerHTML = "A Kártya hozzáadva a gyűjteményhez"
+            }else{
+                status.innerHTML = "A gyűjtemény részét nem alkothatja egy kártya többször"
+            }
+        }else if(mit == 'kazamata'){
+            let nev = document.querySelector(".kazamatanev")
+
+            let select2 = document.querySelector(".tipusSelect")
+            let value2 = select2.options[select2.selectedIndex].innerHTML;
+
+            if(document.querySelector(".kazamataKartya1")){
+                let kartya_select1 = document.querySelector(".kazamataKartya1")
+                let kartya1 = kartya_select1.options[kartya_select1.selectedIndex].innerHTML;
+                if(!currentKazamataKartyak.includes(kartya1)){
+                    currentKazamataKartyak.push(kartya1)
+                }
+            }
+
+            if(document.querySelector(".kazamataKartya2")){
+                let kartya_select2 = document.querySelector(".kazamataKartya2")
+                let kartya2 = kartya_select2.options[kartya_select2.selectedIndex].innerHTML;
+                if(!currentKazamataKartyak.includes(kartya2)){
+                    currentKazamataKartyak.push(kartya2)
+                }
+            }
+
+            if(document.querySelector(".kazamataKartya3")){
+                let kartya_select3 = document.querySelector(".kazamataKartya3")
+                let kartya3 = kartya_select3.options[kartya_select3.selectedIndex].innerHTML;
+                if(!currentKazamataKartyak.includes(kartya3)){
+                    currentKazamataKartyak.push(kartya3)
+                }
+            }
+
+            if(document.querySelector(".kazamataKartya4")){
+                let kartya_select4 = document.querySelector(".kazamataKartya4")
+                let kartya4 = kartya_select4.options[kartya_select4.selectedIndex].innerHTML;
+                if(!currentKazamataKartyak.includes(kartya4)){
+                    currentKazamataKartyak.push(kartya4)
+                }
+            }
+
+            if(document.querySelector(".kazamataKartya5")){
+                let kartya_select5 = document.querySelector(".kazamataKartya5")
+                let kartya5 = kartya_select5.options[kartya_select5.selectedIndex].innerHTML;
+                if(!currentKazamataKartyak.includes(kartya5)){
+                    currentKazamataKartyak.push(kartya5)
+                }
+            }
+
+            let vezer = ""
+            if(document.querySelector(".vezerkartya_select")){
+                let vezer_select = document.querySelector(".vezerkartya_select")
+                vezer = "<span>Vezér: " + vezer_select.options[vezer_select.selectedIndex].innerHTML + "</span>";
+            }
+
+            let value = ""
+            if(document.querySelector(".jutalomSelect")){
+                let select = document.querySelector(".jutalomSelect")
+                value = "<span>Jutalom: " + select.options[select.selectedIndex].innerHTML + "</span>" ;
+            }
+
+            let kartyak = currentKazamataKartyak.join(", ")
+
+            if((value2 == "Egyszerű" && currentKazamataKartyak.length == 1 || value2 == "Kis" && currentKazamataKartyak.length == 3 || value2 == "Nagy" && currentKazamataKartyak.length == 5) && nev.value != ""){
+                let ujkazamata = {
+                    id:nextId,
+                    nev:nev.value,
+                    tipus:value2,
+                    kartyak:kartyak,
+                    vezer:vezer,
+                    jutalom:value
+                }
+                nextId++;
+                const alreadyExists = currentKazamatak.some(k =>
+                    JSON.stringify(k) === JSON.stringify(ujkazamata)
+                );
+
+                if (!alreadyExists) {
+                    currentKazamatak.push(ujkazamata);
+                    kazamata.innerHTML = ""
+                    kazamata.innerHTML += currentKazamatak.map(x => `<span class="kistegla" onclick="TorolCurrentKazamata('${x.id}')"><span>Név: ${x.nev}</span> <span>Tipus: ${x.tipus}</span> <span>Kártyák: ${x.kartyak}</span> ${x.vezer} ${x.jutalom}</span>`).join("")
+                    status.innerHTML = "A kazamata hozzá lett adva"
+                }else{
+                    status.innerHTML = "A kazamata már létezik"
+                }
+            }else if(nev.value == ""){
+                status.innerHTML = "A kazamatának nincsen neve!"
+            }else{
+                status.innerHTML = "A kazamatában nem lehet két ugyanolyan kártya"
+            }
+            
+            currentKazamataKartyak = []
+        }
+    }
+
+    function TorolCurrentKartya(nev){
+        let i = currentgyujtemeny.findIndex(x => x.nev == nev)
+        if(i != -1){
+            currentgyujtemeny.splice(i, 1)
+            gyujtemeny.innerHTML = ""
+            gyujtemeny.innerHTML += currentgyujtemeny.map(x => `<span class="kistegla gyujtemenytegla" onclick="TorolCurrentKartya('${x.nev}')">${x.html}</span>`).join("")
+        }
+    }
+
+    function TorolCurrentKazamata(id){
+        let i = currentKazamatak.findIndex(x => x.id == id)
+        if(i != -1){
+            currentKazamatak.splice(i, 1)
+            kazamata.innerHTML = ""
+            kazamata.innerHTML += currentKazamatak.map(x => `<span class="kistegla" onclick="TorolCurrentKazamata('${x.id}')"><span>Név: ${x.nev}</span> <span>Tipus: ${x.tipus}</span> <span>Kártyák: ${x.kartyak}</span> ${x.vezer} ${x.jutalom}</span>`).join("")
+        }
+    }
+
+
+    function HandleNehezseg(value){
+        document.querySelector(".nehezsegSzin").innerHTML = value
+    }
+
+
+    const openBtn = document.getElementById('openPopup');
+    const closeBtn = document.getElementById('closePopup');
+    const popup = document.getElementById('popup');
+
+    openBtn.onclick = () => {
+        popup.style.display = 'flex';
+    };
+
+    closeBtn.onclick = () => {
+        popup.style.display = 'none';
+    };
+
+    /* kattintás a háttérre -> popup záródik */
+    window.onclick = (e) => {
+        if (e.target === popup) {
+            popup.style.display = 'none';
+        }
+    };
+</script>
+</html>

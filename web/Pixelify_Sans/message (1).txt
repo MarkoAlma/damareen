@@ -1,0 +1,1054 @@
+import math
+import os
+from pathlib import Path
+import re
+import sys
+import time
+import webview
+import json
+import random
+from datetime import datetime
+
+harc_menete = []
+letezo_kartyak = []
+vezer_kartyak = []
+jatekos_gyujtemeny = []
+kazamatak = []
+mostani_pakli = ""
+keszitett_fajl_neve = ""
+kapcsolo = ""
+pontos_hely = r"C:\kapros"
+#pontos_hely = r"D:\wtf\dusza\dusza 2"
+full_uj_jatek = False
+mentesi_fajl_neve = ""
+jatekvilag_neve = ""
+nehezsegi_szint = 10
+mod = "alap"
+# mod = "ajanlott"
+kazamata_elem = "normal"
+
+win = 0
+loss = 0
+
+if pontos_hely != "":
+    os.chdir(pontos_hely)
+
+def main():
+    if len(sys.argv) == 1:
+        #print("Használat: python script.py [--ui | <test_dir_path>]")
+        sys.exit(1)
+
+    if sys.argv[1] == "--ui":
+        run_ui()
+    else:
+        run_automated_test(sys.argv[1])
+
+def run_ui():
+    global kapcsolo
+    kapcsolo = "ui"
+
+def run_automated_test(test_dir_path):
+    global pontos_hely
+    pontos_hely = Path(test_dir_path).resolve()
+    global kapcsolo
+    kapcsolo = "teszt"
+
+if __name__ == "__main__":
+    main()
+
+class Kartya:
+    def __init__(self, nev, sebzes, eletero, elem):
+        self.nev = nev        # Kártya neve
+        self.sebzes = sebzes  # Sebzés
+        self.eletero = eletero  # Életerő
+        self.elem = elem  # Az elem, amihez a kártya tartozik (pl. tűz, levegő stb.)
+    def to_dict(self):
+        return {
+            "nev": self.nev,
+            "sebzes": self.sebzes,
+            "eletero": self.eletero,
+            "elem": self.elem
+        }
+    
+class Kartya_atokkal:
+    def __init__(self, nev, sebzes, eletero, elem, atok):
+        self.nev = nev        # Kártya neve
+        self.sebzes = sebzes  # Sebzés
+        self.eletero = eletero  # Életerő
+        self.elem = elem  # Az elem, amihez a kártya tartozik (pl. tűz, levegő stb.)
+        self.atok = atok
+    def to_dict(self):
+        return {
+            "nev": self.nev,
+            "sebzes": self.sebzes,
+            "eletero": self.eletero,
+            "elem": self.elem,
+            "atok": self.atok
+        }
+
+class Kazamata:
+    #def __init__(self, tipus, nev, ellenfelek, jutalom):
+    def __init__(self, adat):
+        self.tipus = adat[0]
+        self.nev = adat[1]
+        if (adat[0] == "egyszeru"):
+            self.ellenfelek = adat[2].split(",")
+            self.jutalom = adat[3]
+        elif (adat[0] == "kis"):
+            ellenfelek = adat[2].split(",")
+            ellenfelek.append(adat[3])
+            self.ellenfelek = ellenfelek
+            self.jutalom = adat[4]
+        elif (adat[0] == "nagy"):
+            ellenfelek = adat[2].split(",")
+            ellenfelek.append(adat[3])
+            self.ellenfelek = ellenfelek
+            self.jutalom = "kartya"
+    def to_dict(self):
+        return {
+            "tipus": self.tipus,
+            "nev": self.nev,
+            "ellenfelek": self.ellenfelek,
+            "jutalom": self.jutalom
+        }
+    
+def check_file_is_save(filename):
+    if re.match(r'.*_save_\d+\.txt$', filename):
+        return re.match(r'^(.*?)(_save)_\d+\.txt$', filename).group(1)
+    return False
+
+def adatok_kikuldese():
+    jatekos_gyujtemeny_json = json.dumps([p.to_dict() for p in jatekos_gyujtemeny])
+    kazamatak_json = json.dumps([p.to_dict() for p in kazamatak])
+    letezo_kartyak_json = json.dumps([p.to_dict() for p in letezo_kartyak])
+    vezer_kartyak_json = json.dumps([p.to_dict() for p in vezer_kartyak])
+    window.evaluate_js(f"setPythonData({jatekos_gyujtemeny_json}, {kazamatak_json}, {letezo_kartyak_json}, {vezer_kartyak_json}, {win}, {loss});")
+
+def check_js_status():
+    return window.evaluate_js('operation_complete')
+
+def start_battle_animation(harc_menet, nagy_jatekospakli, nagy_kazamatapakli, jutalom_szoveg):
+    nagy_jatekospakli_json = json.dumps([p.to_dict() for p in nagy_jatekospakli])
+    nagy_kazamatapakli_json = json.dumps([p.to_dict() for p in nagy_kazamatapakli])
+    print("Harc animáció indítása...")
+    print(nagy_jatekospakli_json)
+    window.evaluate_js(f"kirajzolas({nagy_jatekospakli_json}, {nagy_kazamatapakli_json})")
+    # Kártyák létrehozása
+    
+    # jatekos_kartya_id = []
+    # kazamata_kartya_id = []
+    # jatekos_kartya_helyek = []
+    # kazamata_kartya_helyek = []
+    # for i, kartya in enumerate(reversed(nagy_jatekospakli)):
+    # #     jatekos_kartya_helyek.append([75*arany+(i*75*arany), SCREEN_H-CARD_H])
+    #      jatekos_kartya_id.append(kartya)
+    # for i, kartya in enumerate(reversed(nagy_kazamatapakli)):
+    # #     ##print(kartya.eletero)
+    # #     kazamata_kartya_helyek.append([SCREEN_W-CARD_W-(i*75*arany), CARD_H/4])
+    #      kazamata_kartya_id.append(kartya)
+    time.sleep(1)
+    print("HARC TELJES MENETE:", harc_menet)
+    # Harci animációk
+    for move in harc_menet:
+        # if torol2:
+        #     table_canvas.delete("all")
+        #     return
+        step_data = move.split(";")
+        kor = step_data[0]
+        player_or_enemy = step_data[1]
+        action = step_data[2]
+        card_name = step_data[3]
+        damage_or_target = int(step_data[4])
+        target_card_name = step_data[5]
+        target_remaining_health = step_data[6]
+
+        if action == "kijatszik":
+            if player_or_enemy == "kazamata":
+                #print("Kazamata kártya kijátszva:", card_name)
+                window.evaluate_js(f"kozepre_mozgatas('kazamata');")
+                time.sleep(2)
+                #move_to_center(kazamata_kartya_id[-1], kazamata_kartya_helyek[-1][0],kazamata_kartya_helyek[-1][1],target_x=SCREEN_W-SCREEN_W/3-CARD_W//2, target_y=SCREEN_H/2-CARD_H/4, steps=30)
+            elif player_or_enemy == "jatekos":
+                #print("Játékos kártya kijátszva:", card_name)
+                window.evaluate_js(f"kozepre_mozgatas('jatekos');")
+                time.sleep(2)
+                #move_to_center(jatekos_kartya_id[-1], jatekos_kartya_helyek[-1][0],jatekos_kartya_helyek[-1][1],target_x=SCREEN_W/3-CARD_W//2, target_y=SCREEN_H/2-CARD_H/4, steps=30)
+
+        elif action == "tamad":
+            #print(f"Támadás: {card_name} -> {target_card_name} sebzés: {damage_or_target}")
+            # Megjelenítjük a támadást (pl. piros kör)
+            if player_or_enemy == "jatekos":
+
+                #print("JÁTÉKOS TÁMAD ELEMEK", [macska.elem for macska in nagy_jatekospakli])
+                #print("JÁTÉKOS TÁMAD NEVEK", [macska.nev for macska in nagy_jatekospakli])
+                # table_canvas.delete(dmg_text)
+                # table_canvas.delete(hp_kep)
+                # table_canvas.delete(dmg_kep)
+                # text_id = table_canvas.create_text(SCREEN_W/2, SCREEN_H/3, text=f"{card_name} támad!", font=("Arial", int(24*arany), "bold"), fill="red")
+                gif_elem = nagy_jatekospakli[0].elem
+                gif_dmg = damage_or_target
+                erosseg = elem_modosito(nagy_jatekospakli[0].elem,nagy_kazamatapakli[0].elem)
+                # print(nagy_jatekospakli[0].nev, "elem:", nagy_jatekospakli[0].elem)
+                szin = "black"
+                if (erosseg == "gyenge"):
+                    szin = "grey"
+                elif (erosseg == "eros"):
+                    szin = "orange"
+                # target_x = SCREEN_W-SCREEN_W/3+CARD_W/30
+                # target_y = SCREEN_H/2-CARD_H/4
+                # if(gif_elem == "fold"):
+                #     dy = +125
+                # else:
+                #     dy = +50
+                # shake_card(table_canvas, jatekos_kartya_id[-1], intensity=4, shakes=2, delay=0.015)
+                # display_attack_image(SCREEN_W/3-CARD_W/25, SCREEN_H/2-CARD_H/4 +(dy*arany), gif_elem+"_gif.gif", False, arany, gif_dmg, target_x, target_y, gif_elem, szin)
+                
+               
+                #time.sleep(1)
+                #table_canvas.itemconfig(kazamata_kartya_id[0], text=f"{nagy_kazamatapakli[0].nev}\n{nagy_kazamatapakli[0].sebzes}/{step_data[6]}")  # Frissítjük a kazamata kártyát
+                # table_canvas.itemconfig(kazamata_kartya_id[-1][7], text=f"Életerő: {step_data[6]} ❤️")
+                # shake_card(table_canvas, kazamata_kartya_id[-1], intensity=24, shakes=8, delay=0.015)
+                # table_canvas.delete(text_id)
+                # table_canvas.update()
+                # time.sleep(0.2)
+                # table_canvas.delete(dmg_kep)
+                #print("MARADT ÉLETE KAZAMATÁNAK:", step_data[6])
+                if int(step_data[6]) <= 0:
+                    # for elem in kazamata_kartya_id[-1]:
+                    #     table_canvas.delete(elem)
+                    # kazamata_kartya_id.pop(-1)
+                    nagy_kazamatapakli.pop(0)
+                    #kazamata_kartya_helyek.pop(-1)
+                #     table_canvas.delete(dmg_text)
+                #     table_canvas.delete(hp_kep)
+                # table_canvas.update()
+
+                window.evaluate_js(f"tamadas('jatekos', '{gif_dmg}', '{szin}', '{gif_elem}', '{card_name}', '{step_data[6]}');")
+                while not check_js_status():  # Addig várunk, amíg a művelet be nem fejeződik
+                    time.sleep(0.1)  # Várakozunk, majd újra próbálkozunk
+                window.evaluate_js("reset_operation_complete();")
+
+            elif player_or_enemy == "kazamata":
+                #print("KAZAMATA TÁMAD ELEMEK", [macska.elem for macska in nagy_kazamatapakli])
+                #print("KAZAMATA TÁMAD NEVEK", [macska.nev for macska in nagy_kazamatapakli])
+                # table_canvas.delete(dmg_text)
+                # table_canvas.delete(hp_kep)
+                # table_canvas.delete(dmg_kep)
+                # text_id = table_canvas.create_text(SCREEN_W/2, SCREEN_H/3, text=f"{card_name} támad!", font=("Arial", int(24*arany), "bold"), fill="blue")
+                gif_elem = nagy_kazamatapakli[0].elem
+                gif_dmg = damage_or_target
+                erosseg = elem_modosito(nagy_jatekospakli[0].elem,nagy_kazamatapakli[0].elem)
+                # print(nagy_jatekospakli[0].nev, "elem:", nagy_jatekospakli[0].elem)
+                szin = "black"
+                if (erosseg == "gyenge"):
+                    szin = "grey"
+                elif (erosseg == "eros"):
+                    szin = "orange"
+                
+                # szin = "black"
+                # if(gif_dmg == nagy_kazamatapakli[0].sebzes*2):
+                #     szin = "orange"
+                # elif(gif_dmg == math.floor(nagy_kazamatapakli[0].sebzes/2)):
+                #     szin = "grey"
+                # target_x = SCREEN_W/3-CARD_W/30
+                # target_y = SCREEN_H/2-CARD_H/4
+                # if(gif_elem == "fold"):
+                #     dy = +125
+                # else:
+                #     dy = +50
+
+
+                # shake_card(table_canvas, kazamata_kartya_id[-1], intensity=4, shakes=2, delay=0.015)
+                # display_attack_image(SCREEN_W-SCREEN_W/3+CARD_W/20, SCREEN_H/2-CARD_H/4 +(dy*arany), gif_elem+"_gif.gif", True, arany, gif_dmg, target_x, target_y, gif_elem, szin)
+                
+
+                
+                #time.sleep(1)
+                # table_canvas.itemconfig(jatekos_kartya_id[-1][7], text=f"Életerő: {step_data[6]} ❤️")
+                # shake_card(table_canvas, jatekos_kartya_id[-1], intensity=24, shakes=8, delay=0.015)
+                # table_canvas.delete(text_id)
+                # table_canvas.update()
+                # time.sleep(0.2)
+                # table_canvas.delete(dmg_kep)
+                # #print("MARADT ÉLETE JÁTÉKOSNAK:", step_data[6])
+                if int(step_data[6]) <= 0:
+                    ##print(jatekos_kartya_id[0])  # Ellenőrizd, mi van benne
+                    # for elem in jatekos_kartya_id[-1]:
+                    #     table_canvas.delete(elem)
+                    #table_canvas.delete(jatekos_kartya_id[0])
+                    # jatekos_kartya_id.pop(-1)
+                    nagy_jatekospakli.pop(0)
+                    #jatekos_kartya_helyek.pop(-1)
+                #     table_canvas.delete(dmg_text)
+                #     table_canvas.delete(hp_kep)
+                #     table_canvas.delete(dmg_kep)
+                # table_canvas.update()
+                window.evaluate_js(f"tamadas('kazamata', '{gif_dmg}', '{szin}', '{gif_elem}', '{card_name}', '{step_data[6]}');")
+                while not check_js_status():  # Addig várunk, amíg a művelet be nem fejeződik
+                    time.sleep(0.1)  # Várakozunk, majd újra próbálkozunk
+                window.evaluate_js("reset_operation_complete();")
+            
+                #time.sleep(1)
+        if len(nagy_jatekospakli) == 0:
+            window.evaluate_js(f"vege_a_harcnak('{jutalom_szoveg}','');")
+            break
+        elif len(nagy_kazamatapakli) == 0:
+            if ("Új kártya" in jutalom_szoveg[1]) or ("Fejlesztés" in jutalom_szoveg[1]):
+                jut = jutalom_szoveg[2].split(";")
+                window.evaluate_js(f"vege_a_harcnak('{jutalom_szoveg[0]}','{'|'.join(jut)}');")
+            else:
+                print("Jutalom szöveg:", jutalom_szoveg)
+                window.evaluate_js(f"vege_a_harcnak('{'|'.join(jutalom_szoveg)}','');")
+            # #print("Harc vége kazamata halt meg.")
+            break
+            
+        # Frissítjük a kártyák életerejét és a támadások után frissítjük a szöveget
+        #table_canvas.itemconfig(jatekos_kartya_id[0], text=f"{card_name}\n{damage_or_target}/{target_remaining_health}")
+        #table_canvas.itemconfig(kazamata_kartya_id[0], text=f"{target_card_name}\n{damage_or_target}/{target_remaining_health}")
+        # kirajzolas()
+        time.sleep(1)
+
+def mentes_beolvaso(mentes):
+    legerosebb_kartya_adatai = None
+    legerosebb_kartya = 0
+    try:
+        f = open(mentes, "r", encoding="utf-8")
+        for adat in f.readlines():
+            milyenAdat = adat.strip().split(";")
+            if len(milyenAdat) < 2:
+                continue
+            adat = milyenAdat[1::]
+            milyenAdat = milyenAdat[0]
+            if milyenAdat == "vilag":
+                kiolvasott_jatekvilag_neve = adat[0]
+                # print("EZ LEFUTOTT")
+            elif milyenAdat == "stat":
+                kiolvasott_win = int(adat[0])
+                kiolvasott_loss = int(adat[1])
+                print("Win és Loss betöltve:", kiolvasott_win, kiolvasott_loss)
+            elif milyenAdat == "mod":
+                kiolvasott_mod = adat[0]
+                print("Mod betöltve:", kiolvasott_mod)
+            elif milyenAdat == "nehezsegi_szint":
+                kiolvasott_nehezsegi_szint = int(adat[0])
+                print("Nehézségi szint betöltve:", kiolvasott_nehezsegi_szint)
+            elif milyenAdat == "kartya":
+                ero = int(adat[1]) + int(adat[2])/2 #életerő fele + sebzés
+                if (ero > legerosebb_kartya):
+                    legerosebb_kartya = ero
+                    legerosebb_kartya_adatai = json.dumps(Kartya(adat[0], int(adat[1]), int(adat[2]), adat[3]).to_dict())
+        f.close()
+        return kiolvasott_jatekvilag_neve, kiolvasott_win, kiolvasott_loss, kiolvasott_nehezsegi_szint, kiolvasott_mod, legerosebb_kartya_adatai
+    except Exception as e:
+        print(e)
+
+def savebol_szam_kinyerese(filename):
+    match = re.search(r'_(\d+)\.txt$', filename)
+    if match:
+        return match.group(1)
+    return None
+
+def nehezsegi_szint_kalkulator(ki, sebzes):
+    random_number = random.random()
+    if ki == "jatekos":
+        sebzes = round(sebzes * (1 - random_number * nehezsegi_szint / 20))
+    elif ki == "kazamata":
+        sebzes = round(sebzes * (1 + random_number * nehezsegi_szint / 10))
+    return sebzes
+
+file_mapping = [
+    (f"NEM_fejHANY.png", f"headHANY"),
+    (f"NEM_hajHANY.png", f"hairHANY"),
+    (f"NEM_torzsHANY.png", f"bodyHANY"),
+    (f"NEM_kopenyHANY.png", f"kopenyHANY"),
+    (f"NEM_labHANY.png", f"legHANY"),
+    ("fej_seged_vonal.png", f"headGuideLineHANY"),
+    ("fej_seged_vonal2.png", f"headGuideLineTwoHANY"),
+    ("haj-fej_seged_vonal.png", f"hajGuideLineHANY"),
+    ("kopeny_seged_vonal.png", f"kopenyGuideLineHANY"),
+    ("torzs_seged_vonal.png", f"bodyGuideLineHANY"),
+    ("lab_seged_vonal.png", f"legGuideLineHANY"),
+    ("derek_seged_vonal.png", f"waistGuideLineHANY")
+]
+def nev_atvalto(i, nem, file_name):
+    for old_file, new_variable in file_mapping:
+        # Cseréljük ki a bal oldali fájlnevet a jobb oldali változóra
+        converted_variable = old_file.replace(f"HANY", f"{i}").replace("NEM", nem)
+        # print("Converted variable:", converted_variable)
+        if converted_variable == file_name:
+            return new_variable.replace("HANY", str(i))
+
+class API:
+    def mod_beallitas(self, uj_mod):
+        global mod
+        mod = uj_mod
+        return
+        # print("Mod beállítva: ", mod)
+    def jatekvilag_neve_beallitas(self, vilag_nev):
+        global jatekvilag_neve
+        jatekvilag_neve = vilag_nev
+        return
+        # print("Játékvilág név beállítva: ", jatekvilag_neve)
+    def mentesi_fajl_neve_beallitas(self, mentesi_nev):
+        print("MENTÉS NEV BEÁLLÍTÁS:", mentesi_nev)
+        global mentesi_fajl_neve, keszitett_fajl_neve
+        if not check_file_is_save(mentesi_nev):
+            most = str(math.floor(time.time()))
+            mentesi_nev = f"{mentesi_nev}_save_{most}.txt"
+        mentesi_fajl_neve = mentesi_nev
+        keszitett_fajl_neve = mentesi_fajl_neve
+        print("KÉSZÍTETT FÁJL NÉV BEÁLLÍTÁS:", keszitett_fajl_neve)
+        return
+        # print("Mentési fájl név beállítva: ", mentesi_fajl_neve)
+    def full_uj_jatek_beallitas(self, uj_jatek):
+        global full_uj_jatek
+        full_uj_jatek = uj_jatek
+        return
+        # print("Full új játék beállítva: ", full_uj_jatek)
+    def mentesi_fajlok_neveinek_betoltese(self):
+        try:
+            current_directory = os.getcwd()
+            mentesi_fajl_nevek = []
+            # Listázd ki az összes fájlt a mappában
+            for file_name in os.listdir(current_directory):
+                # Ellenőrizd, hogy a fájl neve "_save.txt"-ra végződik
+                ellenorzott_fajl_nev = check_file_is_save(file_name)
+                if ellenorzott_fajl_nev:
+                    idopont = (str(datetime.fromtimestamp(int(savebol_szam_kinyerese(file_name))).strftime('%Y-%m-%d %H:%M:%S')))
+                    mentesi_fajl_nevek.append({"fajl_nev": file_name, "mentesi_nev": ellenorzott_fajl_nev, "idopont": idopont})
+                    # mentesi_fajl_nevek.append(ellenorzott_fajl_nev)
+                # print("MENTÉSI FAJL NEVEK:", mentesi_fajl_nevek)
+            mentesi_fajl_nevek = sorted(mentesi_fajl_nevek, key=lambda x: int(savebol_szam_kinyerese(x['fajl_nev'])), reverse=True)
+            atadando_adat = []
+            for mentes in mentesi_fajl_nevek:
+                olvasott_adat = mentes_beolvaso(mentes["fajl_nev"])
+                atadando_adat.append([mentes,olvasott_adat])
+            print("MENTÉSI FAJL NEVEK ÉS ADATOK:", atadando_adat)
+            return atadando_adat
+        except Exception as e:
+            print(e)
+    def jatekvilagok_neveinek_betoltese(self):
+        try:
+            current_directory = os.getcwd()
+            vilag_fajl_nevek = []
+            # Listázd ki az összes fájlt a mappában
+            for file_name in os.listdir(current_directory):
+                # Ellenőrizd, hogy a fájl neve "_world.txt"-ra végződik
+                if file_name.endswith("_world.txt"):
+                    try:
+                        f = open(os.path.join(current_directory, file_name), "r", encoding="utf-8")
+                        kartyak_w = []
+                        vezer_w = []
+                        kazamatak_w = []
+                        sajat_w = []
+                        for adat in f.readlines():
+                            milyenAdat = adat.strip().split(";")
+                            if len(milyenAdat) < 2:
+                                continue
+                            adat = milyenAdat[1::]
+                            milyenAdat = milyenAdat[0]
+                            if milyenAdat == "uj kartya":
+                                kartyak_w.append(adat[0])
+                            elif milyenAdat == "uj vezer":
+                                vezer_w.append(adat[0])
+                            elif milyenAdat == "uj kazamata":
+                                kazamatak_w.append(adat[1])
+                            elif milyenAdat == "felvetel gyujtemenybe":
+                                sajat_w.append(adat[0])
+                        f.close()
+                    except Exception as e:
+                        print(e)
+                    vilag_fajl_nevek.append([file_name.replace("_world.txt", ""), kartyak_w, vezer_w, kazamatak_w, sajat_w])
+            print("Játékvilágok betöltve:", vilag_fajl_nevek)
+            return vilag_fajl_nevek
+        except Exception as e:
+            print(e)
+    def karakter_kimentese(self, nev, sebzes, eletero, elem, headIndex, bodyIndex, legsIndex, milyen, nem):
+        # print("gasfuizéguipfsabguihpfasdihbgvfasdhigbvl")
+        try:
+            f = open("karakterek.txt", "a", encoding="utf-8")
+            if milyen == "normal":
+                f.write(f"kartya;{nev};{sebzes};{eletero};{elem};{headIndex};{bodyIndex};{legsIndex};{nem}\n")
+            elif milyen == "vezer":
+                f.write(f"vezer;{nev};{sebzes};{eletero};{elem};{headIndex};{bodyIndex};{legsIndex};{nem}\n")
+            f.close()
+        except Exception as e:
+            print(e)
+    def karakterek_betoltese(self):
+        print("Karakterek betöltése...")
+        viszszaadando_adat = []
+        normal_kartyak_vissza = []
+        vezer_kartyak_vissza = []
+        try:
+            f = open("karakterek.txt", "r", encoding="utf-8")
+            for adat in f.readlines():
+                if (adat.strip() == ""):
+                    continue
+                milyenAdat = adat.strip().split(";")
+                adat = milyenAdat[1::]
+                milyenAdat = milyenAdat[0]
+                if milyenAdat == "kartya":
+                    normal_kartyak_vissza.append(adat)
+                elif milyenAdat == "vezer":
+                    vezer_kartyak_vissza.append(adat)
+            f.close()
+        except Exception as e:
+            print(e)
+        viszszaadando_adat.append(normal_kartyak_vissza)
+        viszszaadando_adat.append(vezer_kartyak_vissza)
+        print("Karakterek betöltve.")
+        print(viszszaadando_adat)
+        return viszszaadando_adat
+    def harc_meghivo(self,sajat_pakli, kazamata_ellen):
+        print("Harc meghívó...")
+        print("Saját pakli:", sajat_pakli)
+        print("Kazamata ellenfél:", kazamata_ellen)
+        global kazamata_elem
+        kazamata_elem = "normal"
+        kazamata_ellen_normal = []
+        # print("Harc indul...")
+        # print(kazamata_ellen)
+        kapottak = ",".join(kazamata_ellen["ellenfelek"])
+        vanEBoss = False
+        #print(kapottak)
+        #print(f"alma: {kapottak.split(",")[:-1]}")
+        for kartyacska in vezer_kartyak:
+            if kazamata_ellen["ellenfelek"][-1] == kartyacska.nev:
+                kazamata_elem = kartyacska.elem
+                #print("KAZAMATA ELEM:", kazamata_elem)
+                kazamata_ellen_normal = Kazamata([kazamata_ellen["tipus"], kazamata_ellen["nev"], ",".join(kapottak.split(",")[:-1]), kapottak.split(",")[-1], kazamata_ellen["jutalom"]])
+                vanEBoss = True
+                break
+        #print(kapottak)
+        if (not vanEBoss):
+            kazamata_ellen_normal = Kazamata([kazamata_ellen["tipus"], kazamata_ellen["nev"], kapottak, kazamata_ellen["jutalom"]])
+        harc_menet = harc(sajat_pakli, kazamata_ellen_normal)
+        print("Harc indul...")
+        print(harc_menet)
+        start_battle_animation(harc_menet[0], harc_menet[1], harc_menet[2], harc_menet[3])
+
+        #print("Harc vége.")
+        #print(f"Harc indítása ezekkel: {sajat_pakli} és {kazamata_ellen_normal}")
+        print(harc_menet)
+    def load_data_from_in(self):
+        global jatekos_gyujtemeny, jatekvilag_neve, mentesi_fajl_neve, keszitett_fajl_neve, win, loss, nehezsegi_szint, kazamatak, mod
+        print("ZGHIHDGHZIDAGZHDGHZADGZHOIADGHIZDIGHLZADFIGZHODFIGZOP")
+        print("Full új játék:", full_uj_jatek)
+        print("Játékvilág neve:", jatekvilag_neve)
+        print("Mentési fájl neve:", mentesi_fajl_neve)
+        #print("Adatok betöltése in.txt fájlból...")
+        if not full_uj_jatek:
+            print("KUTYULMUTYULI")
+            # mentesi_fajl_neve_temp = mentesi_fajlok_neveinek_betoltese()
+            # mentesi_fajl_neve = mentesi_fajl_neve_temp[0]
+            try:
+                f = open(mentesi_fajl_neve, "r", encoding="utf-8")
+                for adat in f.readlines():
+                    milyenAdat = adat.strip().split(";")
+                    if len(milyenAdat) < 2:
+                        continue
+                    adat = milyenAdat[1::]
+                    milyenAdat = milyenAdat[0]
+                    if milyenAdat == "vilag":
+                        jatekvilag_neve = adat[0]
+                        # print("EZ LEFUTOTT")
+                    elif milyenAdat == "stat":
+                        win = int(adat[0])
+                        loss = int(adat[1])
+                        print("Win és Loss betöltve:", win, loss)
+                    elif milyenAdat == "nehezsegi_szint":
+                        nehezsegi_szint = int(adat[0])
+                        print("Nehézségi szint betöltve:", nehezsegi_szint)
+                    elif milyenAdat == "mod":
+                        mod = adat[0]
+                        print("Mod betöltve:", mod)
+                    elif milyenAdat == "kartya":
+                        jatekos_gyujtemeny.append(Kartya(adat[0], int(adat[1]), int(adat[2]), adat[3]))
+                f.close()
+            except Exception as e:
+                print(e)
+            print("Adatok betöltve.")
+            print(len(jatekos_gyujtemeny))
+        try:
+            # if full_uj_jatek:
+            #     #temp = jatekvilagok_neveinek_betoltese()
+            #     # jatekvilag_neve = vilag_neve
+            #     print("KUTYULI:", jatekvilag_neve)
+            #print("Játékvilág betöltése:", jatekvilag_neve)
+            f = open(f"{jatekvilag_neve}_world.txt", "r", encoding="utf-8")
+            uj_jatekos_resz = False
+            for i in f.readlines():
+                adat = i.strip().split(";")
+                if adat[0] == "uj kartya":
+                    nev = adat[1]
+                    sebzes = int(adat[2])
+                    eletero = int(adat[3])
+                    elem = adat[4]
+                    letezo_kartyak.append(Kartya(nev, sebzes, eletero, elem))
+                elif adat[0] == "uj vezer":
+                    nev = adat[1]
+                    keresenso_nev = adat[2]
+                    boost = adat[3]
+                    for kl in letezo_kartyak:
+                        if kl.nev == keresenso_nev:
+                            sebzes = kl.sebzes
+                            eletero = kl.eletero
+                            elem = kl.elem
+                            if "sebzes" in boost:
+                                sebzes *= 2
+                            elif "eletero" in boost:
+                                eletero *= 2
+                            vezer_kartyak.append(Kartya(nev, sebzes, eletero, elem))
+                            break
+                elif adat[0] == "uj kazamata":
+                    kazamatak.append(Kazamata(adat[1:]))
+                elif adat[0] == "uj jatekos":
+                    uj_jatekos_resz = True
+                elif uj_jatekos_resz and adat[0] == "felvetel gyujtemenybe" and full_uj_jatek:
+                    kartya = None
+                    kartya = kartya_adatai(adat[1], letezo_kartyak)
+                    if kartya:
+                        if kartya not in jatekos_gyujtemeny:
+                            jatekos_gyujtemeny.append(kartya)
+                        else:
+                            print(f"Már szerepel a gyűjteményben ez a kártya: {kartya.nev}")
+                        #else:
+                            #print("Már szerepel a gyűjteményben ez a kártya.", kartya.nev)
+                    else:
+                        print(f"Nem található a {adat[1]} nev kártya a világkártyák között.")
+                mostani_pakli = []
+            f.close()
+            for kaz in kazamatak:
+                print(kaz.tipus, kaz.nev, kaz.ellenfelek)
+            kazamatak = sorted(kazamatak, key=lambda x: (x.tipus, x.nev))
+            print("Kazamaták rendezve:")
+            for kaz in kazamatak:
+                print(kaz.tipus, kaz.nev, kaz.ellenfelek)
+            # cserelendo_datum = mentesi_fajl_neve.split("_save_")[-1].replace(".txt","")
+            # os.rename(f"{mentesi_fajl_neve}_save.txt", keszitett_fajl_neve)
+            f = open(keszitett_fajl_neve, "w", encoding="utf-8")
+            for adat in jatekos_gyujtemeny:
+                f.write(f"kartya;{adat.nev};{adat.sebzes};{adat.eletero};{adat.elem}\n")
+            f.write(f"\nvilag;{jatekvilag_neve}\n")
+            f.write(f"stat;{win};{loss}\n")
+            f.write(f"nehezsegi_szint;{nehezsegi_szint}\n")
+            f.write(f"mod;{mod}\n")
+            f.close()
+            most = str(math.floor(time.time()))
+            os.rename(keszitett_fajl_neve, f"{keszitett_fajl_neve.replace(savebol_szam_kinyerese(keszitett_fajl_neve), most)}")
+            keszitett_fajl_neve = f"{keszitett_fajl_neve.replace(savebol_szam_kinyerese(keszitett_fajl_neve), most)}"
+            
+            #print("gzuiofdrsgzhuiofsdgizhofdsh")
+            adatok_kikuldese()
+            #window.evaluate_js(f"setPythonData({jatekos_gyujtemeny});")
+            #window.evaluate_js(f"window.kutyus({json.dumps({"kutya":"kukorica"})})")
+        except Exception as e:
+            print(e)
+            #print("in.txt nem található — folytatás üres adatokkal.")
+    def back_to_collection(self):
+        global harc_menete
+        global melyikKazamata
+        global keszitett_fajl_neve
+        try:
+            most = str(math.floor(time.time()))
+            f = open(keszitett_fajl_neve, "w", encoding="utf-8")
+            for adat in jatekos_gyujtemeny:
+                f.write(f"kartya;{adat.nev};{adat.sebzes};{adat.eletero};{adat.elem}\n")
+            f.write(f"\nvilag;{jatekvilag_neve}\n")
+            f.write(f"stat;{win};{loss}\n")
+            f.write(f"nehezsegi_szint;{nehezsegi_szint}\n")
+            f.write(f"mod;{mod}\n")
+            f.close()
+            os.rename(keszitett_fajl_neve, f"{keszitett_fajl_neve.replace(savebol_szam_kinyerese(keszitett_fajl_neve), most)}")
+            keszitett_fajl_neve = f"{keszitett_fajl_neve.replace(savebol_szam_kinyerese(keszitett_fajl_neve), most)}"
+        except Exception as e:
+            pass
+        harc_menete = []
+        melyikKazamata = None
+        adatok_kikuldese()
+    def set_nehezsegi_szint(self, szint):
+        global nehezsegi_szint
+        nehezsegi_szint = int(szint)
+        #print(f"Nehezségi szint beállítva: {nehezsegi_szint}")
+    def osszes_kepnev_betoltese(self):
+        nagykepnevek = []
+        for i in range (2):
+            if ( i == 0):
+                selectedGender = "male"
+            else:
+                selectedGender = "female"
+            try:
+                print("HDUAGDZHADFVIZHADFFCDu")
+                folder = ""
+                lf = ""
+                kepnevek = []
+                if selectedGender == "male":
+                    folder = "f_ch"
+                    lf = "f"
+                elif selectedGender == "female":
+                    folder = "n_ch"
+                    lf = "l"
+                current_directoryy = os.path.join(os.getcwd(), 'web') # Ezt valszeg ki kell venni
+                hanyEmber = 0
+                # Listázd ki az összes fájlt a mappában
+                for file_name in os.listdir(current_directoryy):
+                    # Ellenőrizd, hogy a fájl neve "_world.txt"-ra végződik
+                    file_path = os.path.join(current_directoryy, file_name)
+                    if os.path.isdir(file_path) and file_name.startswith(f"{folder}"):
+                        hanyEmber += 1
+                for i in range(1, hanyEmber+1):
+                    folder_path = os.path.join(current_directoryy, f"{folder}{i}")
+                    if os.path.exists(folder_path):
+                        for file_name in os.listdir(folder_path):
+                            atvaltott_nev = nev_atvalto(i, lf, file_name)
+                            if atvaltott_nev:
+                                kepnevek.append([f"{folder_path.split(os.sep)[-1]}/{file_name}", atvaltott_nev])
+                            else: 
+                                print(f"Nincs megfeleltetés a fájlnévhez: {file_name}")
+            except Exception as e:
+                print(f"Hiba történt a képek betöltésekor: {e}")
+            print("Képek betöltve:", kepnevek)
+            nagykepnevek.append(kepnevek)
+        return nagykepnevek
+        # return kepnevek
+
+def kartya_adatai(kartya_nev, kartya_lista):
+    try:
+        for kartya in kartya_lista:
+            if kartya.nev == kartya_nev:
+                return kartya
+    except Exception as e:
+        pass
+        #print(f"Hiba történt a kártya adatainak lekérdezésekor: {e}")
+    return None
+    
+def harc(jatekos_pakli_nevek, kazamata):
+    global win, loss, kazamata_elem
+    try:
+        global harc_menete
+        #print("harc kezdodik a(z)", kazamata.nev, "ellen")
+        jutalom_ki = ""
+        global jatekos_gyujtemeny
+
+        # segédfüggvény: klónoz egy Kartya objektumot (harci példány)
+        def clone_kartya(k):
+            return Kartya(k.nev, k.sebzes, k.eletero, k.elem)
+
+        # előkészítés
+        kazamata_pakli_nevek = kazamata.ellenfelek.copy()
+        jatekos_pakli = []            # battle cards (másolatok)
+        jatekos_orig_refs = []        # eredeti referencia a jutalomhoz
+        kazamata_pakli = []
+        kazamata_orig_refs = []
+        nagy_kazamatapakli = []       # snapshot visszaadáshoz
+        nagy_jatekospakli = []
+
+        # játékos pakli feltöltése
+        for nev in jatekos_pakli_nevek:
+            orig = kartya_adatai(nev, jatekos_gyujtemeny)
+            if orig:
+                battle = clone_kartya(orig)
+                jatekos_pakli.append(battle)
+                jatekos_orig_refs.append(orig)
+                nagy_jatekospakli.append(clone_kartya(orig))
+
+        # kazamata pakli feltöltése
+        for nev in kazamata_pakli_nevek:
+            orig = kartya_adatai(nev, letezo_kartyak)
+            if not orig:
+                orig = kartya_adatai(nev, vezer_kartyak)
+            if orig:
+                battle = clone_kartya(orig)
+                kazamata_pakli.append(battle)
+                kazamata_orig_refs.append(orig)
+                nagy_kazamatapakli.append(clone_kartya(orig))
+
+        if not jatekos_pakli or not kazamata_pakli:
+            return [[], nagy_jatekospakli, nagy_kazamatapakli, "Nincs játékos vagy ellenfél kártya"]
+
+        harc_menete = []
+        harc_menete.append(f"harc kezdodik;{kazamata.nev}\n\n")
+
+        kor = 0
+        jatekoskartya_lent_van = False
+        kazamatakartya_lent_van = False
+
+        while True:
+            #print(f"--- {kor}. kör ---")
+            kor += 1
+
+            # KAZAMATA kijátssza/kijön a lapját
+            if kazamata_pakli and not kazamatakartya_lent_van:
+                harc_menete.append(f"{kor}.kor;kazamata;kijatszik;{kazamata_pakli[0].nev};{kazamata_pakli[0].sebzes};{kazamata_pakli[0].eletero};{kazamata_pakli[0].elem}\n")
+                kazamatakartya_lent_van = True
+            elif kazamata_pakli:
+                if kapcsolo == "teszt":
+                    seb = sebzes_elemSzorzoval(kazamata_pakli[0].sebzes, kazamata_pakli[0].elem, jatekos_pakli[0].elem)
+                else:
+                    seb = nehezsegi_szint_kalkulator("kazamata", sebzes_elemSzorzoval(kazamata_pakli[0].sebzes, kazamata_pakli[0].elem, jatekos_pakli[0].elem))
+                    if (mod == "ajanlott"):
+                        if (kazamata_elem != "normal"):
+                            if (elem_modosito(kazamata_pakli[0].elem, kazamata_elem)) == "eros":
+                                seb = math.floor(seb * 0.5)
+                            elif (kazamata_pakli[0].elem == kazamata_elem):
+                                seb = math.floor(seb * 2)
+                jatekos_pakli[0].eletero = max(0, jatekos_pakli[0].eletero - seb)
+                harc_menete.append(f"{kor}.kor;kazamata;tamad;{kazamata_pakli[0].nev};{seb};{jatekos_pakli[0].nev};{jatekos_pakli[0].eletero}\n")
+                if jatekos_pakli[0].eletero <= 0:
+                    jatekos_pakli.pop(0)
+                    jatekos_orig_refs.pop(0)
+                    jatekoskartya_lent_van = False
+                    if not jatekos_pakli:
+                        harc_menete.append("\njatekos vesztett")
+                        jutalom_ki = "Vereség!"
+                        loss += 1
+                        if kapcsolo == "teszt":
+                            with open(f"{harc_kiiras_nev}.txt", "w", encoding="utf-8") as f:
+                                f.write("".join(harc_menete))
+                        return [[adat.strip() for adat in harc_menete[1:-1] if adat.strip()], nagy_jatekospakli, nagy_kazamatapakli, jutalom_ki]
+
+            # JÁTEKOS kijátssza/kijön a lapját
+            if jatekos_pakli and not jatekoskartya_lent_van:
+                harc_menete.append(f"{kor}.kor;jatekos;kijatszik;{jatekos_pakli[0].nev};{jatekos_pakli[0].sebzes};{jatekos_pakli[0].eletero};{jatekos_pakli[0].elem}\n")
+                jatekoskartya_lent_van = True
+            elif jatekos_pakli:
+                if kapcsolo == "teszt":
+                    seb = sebzes_elemSzorzoval(jatekos_pakli[0].sebzes, jatekos_pakli[0].elem, kazamata_pakli[0].elem)
+                else:
+                    seb = nehezsegi_szint_kalkulator("jatekos",  sebzes_elemSzorzoval(jatekos_pakli[0].sebzes, jatekos_pakli[0].elem, kazamata_pakli[0].elem))
+                    if (mod == "ajanlott"):
+                        if (kazamata_elem != "normal"):
+                            if (elem_modosito(jatekos_pakli[0].elem, kazamata_elem)) == "eros":
+                                seb = math.floor(seb * 0.5)
+                            elif (jatekos_pakli[0].elem == kazamata_elem):
+                                seb = math.floor(seb * 2)
+
+                kazamata_pakli[0].eletero = max(0, kazamata_pakli[0].eletero - seb)
+                # print(f"ALMA: {kazamata_pakli[0].nev} életereje: {kazamata_pakli[0].eletero}")
+                harc_menete.append(f"{kor}.kor;jatekos;tamad;{jatekos_pakli[0].nev};{seb};{kazamata_pakli[0].nev};{kazamata_pakli[0].eletero}\n")
+                if kazamata_pakli[0].eletero == 0:
+                    kazamata_pakli.pop(0)
+                    kazamata_orig_refs.pop(0)
+                    kazamatakartya_lent_van = False
+                    if not kazamata_pakli:
+                        # JUTALOM
+                        if kazamata.jutalom != "kartya":
+                            if jatekos_orig_refs:
+                                orig_kartya = jatekos_orig_refs[0]
+                                # készíts másolatot a játékos gyűjteményhez
+                                new_kartya = Kartya(orig_kartya.nev, orig_kartya.sebzes, orig_kartya.eletero, orig_kartya.elem)
+                                if kazamata.jutalom == "sebzes":
+                                    new_kartya.sebzes += 1
+                                    jutalom_ki = ["Győzelem!","Sebzés növelés!",f"{new_kartya.nev} +1 Sebzés ⚔️"]
+                                    win += 1
+                                elif kazamata.jutalom == "eletero":
+                                    new_kartya.eletero += 2
+                                    jutalom_ki = ["Győzelem!","Életerő növelés!",f"{new_kartya.nev} +2 Életerő ❤️"]
+                                    win += 1
+                                # frissítés a játékos gyűjteményben
+                                for i, k in enumerate(jatekos_gyujtemeny):
+                                    if k.nev == new_kartya.nev:
+                                        jatekos_gyujtemeny[i] = new_kartya
+                                        break
+                                harc_menete.append(f"\njatekos nyert;{kazamata.jutalom};{new_kartya.nev}")
+                        else:
+                            # jutalom kártya: vegyük az első letezo_kartyak elemet, ami nincs a játékos gyűjteményben
+                            win += 1
+                            jatekos_gyujtemeny_nevek = {k.nev for k in jatekos_gyujtemeny}
+                            if mod == "alap":
+                                for jutalom in letezo_kartyak:
+                                    if jutalom.nev not in jatekos_gyujtemeny_nevek:
+                                        jatekos_gyujtemeny.append(clone_kartya(jutalom))
+                                        jutalom_ki = ["Győzelem!","Új kártya!",f"{jutalom.nev};{jutalom.sebzes};{jutalom.eletero};{jutalom.elem}"]
+                                        harc_menete.append(f"\njatekos nyert;{jutalom.nev}")
+                                        break
+                            elif mod == "ajanlott":
+                                reward = clone_kartya(random.choice(letezo_kartyak))
+                                reward.sebzes += 1
+                                reward.eletero += 2
+                                marmegvan = False
+                                # for i, k in enumerate(jatekos_gyujtemeny):
+                                #     if k.nev == reward.nev:
+                                #         jatekos_gyujtemeny[i] = reward
+                                #         break
+                                for i,kartya_teszt in enumerate(jatekos_gyujtemeny):
+                                    if kartya_teszt.nev == reward.nev:
+                                        print("FEJLESZTÉS ELŐTT:")
+                                        print(jatekos_gyujtemeny[i].nev, jatekos_gyujtemeny[i].sebzes, jatekos_gyujtemeny[i].eletero, jatekos_gyujtemeny[i].elem)
+                                        jatekos_gyujtemeny[i] = clone_kartya(reward)
+                                        # jatekos_gyujtemeny[i].sebzes += 1
+                                        # jatekos_gyujtemeny[i].eletero += 2
+                                        print("FEJLESZTÉS UTÁN:")
+                                        print(jatekos_gyujtemeny[i].nev, jatekos_gyujtemeny[i].sebzes, jatekos_gyujtemeny[i].eletero, jatekos_gyujtemeny[i].elem)
+                                        jutalom_ki = ["Győzelem!","Fejlesztés!",f"{reward.nev};{reward.sebzes};{reward.eletero};{reward.elem}"]
+                                        print("FEJLESZTÉS JUTALOM:", jutalom_ki)
+                                        harc_menete.append(f"\njatekos nyert;fejlesztes-{reward.nev}")
+                                        marmegvan = True
+                                        break
+                                if not marmegvan:
+                                    jatekos_gyujtemeny.append(clone_kartya(reward))
+                                    jutalom_ki = ["Győzelem!","Új kártya!",f"{reward.nev};{reward.sebzes};{reward.eletero};{reward.elem}"]
+                                    harc_menete.append(f"\njatekos nyert;{reward.nev}")
+                        if kapcsolo == "teszt":
+                            with open(f"{harc_kiiras_nev}.txt", "w", encoding="utf-8") as f:
+                                f.write("".join(harc_menete))
+                        # print("Játékos nyert!")
+                        # print(f"Jutalom: {jutalom_ki}")
+                        return [[adat.strip() for adat in harc_menete[1:-1] if adat.strip()], nagy_jatekospakli, nagy_kazamatapakli, jutalom_ki]
+
+            harc_menete.append("\n")
+    except Exception as e:
+        print("Hiba a harc során:", e)
+harc_kiiras_nev = ""
+
+def elem_modosito(elem1, elem2):
+    erosseg = "normal"
+    if {elem1, elem2} == {"fold", "levego"} or {elem1, elem2} == {"viz", "tuz"} or {elem1, elem2} == {"viz", "levego"} or {elem1, elem2} == {"tuz", "fold"}:
+        erosseg = "eros"
+    elif {elem1, elem2} == {"viz", "fold"} or {elem1, elem2} == {"levego", "tuz"}:
+        erosseg = "gyenge"
+    return erosseg
+
+def sebzes_elemSzorzoval(sebzes, elem1, elem2):
+    erosseg = elem_modosito(elem1, elem2)
+    if erosseg == "normal":
+        SebzesSzorzo = 1
+    elif erosseg == "eros":
+        SebzesSzorzo = 2
+    elif erosseg == "gyenge":
+        SebzesSzorzo = 0.5
+    # if {elem1, elem2} == {"fold", "levego"} or {elem1, elem2} == {"viz", "tuz"} or {elem1, elem2} == {"viz", "levego"} or {elem1, elem2} == {"tuz", "fold"}:
+    #     SebzesSzorzo = 2
+    # elif {elem1, elem2} == {"viz", "fold"} or {elem1, elem2} == {"levego", "tuz"}:
+    #     SebzesSzorzo = 0.5
+    sebzes *= SebzesSzorzo
+    return math.floor(sebzes)
+
+def on_load():
+    # Miután az oldal betöltődött, kapcsoljuk be a teljes képernyőt
+    global window
+    window.toggle_fullscreen()
+    window.show()
+
+def create_window():
+    # Az on_load esemény regisztrálása
+    window.events.loaded += lambda: on_load()
+
+    # Indítjuk a GUI-t
+    webview.start(gui='')
+
+if kapcsolo == "teszt":
+    try:
+        f = open("in.txt", "r", encoding="utf-8")
+        uj_jatekos_resz = False
+        for i in f.readlines():
+            adat = i.strip().split(";")
+            if adat[0] == "uj kartya":
+                nev = adat[1]
+                sebzes = int(adat[2])
+                eletero = int(adat[3])
+                elem = adat[4]
+                letezo_kartyak.append(Kartya(nev, sebzes, eletero, elem))
+            elif adat[0] == "uj vezer":
+                nev = adat[1]
+                keresenso_nev = adat[2]
+                boost = adat[3]
+                for i in letezo_kartyak:
+                    if i.nev == keresenso_nev:
+                        sebzes = i.sebzes
+                        eletero = i.eletero
+                        elem = i.elem
+                        if "sebzes" in boost:
+                            sebzes *= 2
+                        elif "eletero" in boost:
+                            eletero *= 2
+                        vezer_kartyak.append(Kartya(nev, sebzes, eletero, elem))
+                        break
+            elif adat[0] == "uj kazamata":
+                kazamatak.append(Kazamata(adat[1:]))
+            elif adat[0] == "uj jatekos":
+                uj_jatekos_resz = True
+            elif uj_jatekos_resz and adat[0] == "felvetel gyujtemenybe":
+                kartya = None
+                kartya = kartya_adatai(adat[1], letezo_kartyak)
+                if kartya:
+                    if kartya not in jatekos_gyujtemeny:
+                        jatekos_gyujtemeny.append(kartya)
+                    else:
+                        print(f"Már szerepel a gyűjteményben ez a kártya: {kartya.nev}")
+                    #else:
+                        #print("Már szerepel a gyűjteményben ez a kártya.", kartya.nev)
+                else:
+                    print(f"Nem található a {adat[1]} nevű kártya a világkártyák között.")
+                mostani_pakli = []
+            elif adat[0] == "uj pakli":
+                pakli_adat = adat[1].split(",")
+                kapott_pakli_nevek = []
+                for nevek in pakli_adat:
+                    if nevek not in kapott_pakli_nevek:
+                        kapott_pakli_nevek.append(nevek)
+                    else:
+                        print(f"A pakliban már szerepel ez a kártya: {nevek}")
+                if (len(kapott_pakli_nevek) > math.ceil(len(jatekos_gyujtemeny)/2)):
+                    print("A pakliban lévő kártyák száma meghaladja a megengedett maximumot.")
+                else:
+                    for nevek in kapott_pakli_nevek:
+                        if not kartya_adatai(nevek, jatekos_gyujtemeny):
+                            print(f"A pakliban szereplő {nevek} kártya nem található meg a gyűjteményben.")
+                            print("Ebből az okból kifolyólag a program kilép!")
+                            exit()
+                    mostani_pakli = kapott_pakli_nevek
+            elif adat[0] == "export vilag":
+                if "txt" != adat[1][-3:]:
+                    f = open(f"{adat[1]}.txt", "w", encoding="utf-8")
+                else:
+                    f = open(f"{adat[1]}", "w", encoding="utf-8")
+                if letezo_kartyak:
+                    for kartya in letezo_kartyak:
+                        f.write(f"kartya;{kartya.nev};{kartya.sebzes};{kartya.eletero};{kartya.elem}\n")
+                    f.write("\n")
+                if vezer_kartyak:
+                    for kartya in vezer_kartyak:
+                        f.write(f"vezer;{kartya.nev};{kartya.sebzes};{kartya.eletero};{kartya.elem}\n")
+                    f.write("\n")
+                if kazamatak:
+                    for kazamata in kazamatak:
+                        ellenfelek_str = ",".join(kazamata.ellenfelek)
+                        f.write(f"kazamata;{kazamata.tipus};{kazamata.nev};{ellenfelek_str};{kazamata.jutalom}\n")
+                f.close()
+            elif adat[0] == "export jatekos":
+                if "txt" != adat[1][-3:]:
+                    f = open(f"{adat[1]}.txt", "w", encoding="utf-8")
+                else:
+                    f = open(f"{adat[1]}", "w", encoding="utf-8")
+                if jatekos_gyujtemeny:
+                    for kartya in jatekos_gyujtemeny:
+                        f.write(f"gyujtemeny;{kartya.nev};{kartya.sebzes};{kartya.eletero};{kartya.elem}\n")
+                    f.write("\n")
+                if mostani_pakli:
+                    for kartya_nev in mostani_pakli:
+                        f.write(f"pakli;{kartya_nev}\n")
+                f.close()
+            elif adat[0] == "harc":
+                talalat = False
+                for kazamata in kazamatak:
+                    if kazamata.nev == adat[1]:
+                        talalat = True
+                        if kazamata.tipus == "nagy":
+                            if len(jatekos_gyujtemeny) >= len(letezo_kartyak):
+                                print("Nagy kazamata ellen csak akkor lehet harcolni, ha a még nincs meg az összes kártya a gyűjteményben.")
+                                break
+                        harc_kiiras_nev = adat[2].replace(".txt", "")
+                        harc(mostani_pakli, kazamata)
+                        break
+                if not talalat:
+                    print(f"Nincs ilyen nevű kazamata: {adat[1]}")
+        f.close()
+    except Exception as e:
+        print(e)
+
+if kapcsolo != "teszt":
+    api = API()
+    window = webview.create_window("Damareen", r"C:\kapros\web\index.html", hidden=True, on_top=False, width=0, height=0, js_api=api)
+    #window = webview.create_window("Damareen", r"D:\wtf\dusza\dusza 2\index.html", hidden=True, on_top=False, width=0, height=0, js_api=api)
+    create_window()

@@ -1,0 +1,15 @@
+kartya;Arin;2;5;fold
+kartya;Liora;2;4;levego
+kartya;Selia;2;6;viz
+kartya;Nerun;3;3;tuz
+kartya;Torak;3;4;fold
+kartya;Emera;2;5;levego
+kartya;Kael;3;5;tuz
+kartya;Myra;2;6;fold
+kartya;Thalen;3;5;levego
+kartya;Isara;2;6;viz
+
+vilag;Nagyon komolyak bg k
+stat;0;0
+nehezsegi_szint;0
+mod;ajanlott

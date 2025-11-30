@@ -1,0 +1,16 @@
+kartya;Arin;2;5;fold
+kartya;Liora;2;4;levego
+kartya;Selia;2;6;viz
+kartya;Nerun;3;20;tuz
+kartya;Torak;3;4;fold
+kartya;Emera;2;5;levego
+kartya;Kael;3;20;tuz
+kartya;Myra;2;20;fold
+kartya;Thalen;3;20;levego
+kartya;Isara;2;20;viz
+
+vilag;jatekmod
+
+stat;5;1
+
+nehezsegi_szint;4

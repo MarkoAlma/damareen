@@ -1,0 +1,4 @@
+
+vilag;jatekmod2
+stat;0;0
+nehezsegi_szint;5

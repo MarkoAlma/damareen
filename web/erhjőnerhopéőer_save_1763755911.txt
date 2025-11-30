@@ -1,0 +1,12 @@
+
+kartya;Emera;2;5;levego
+kartya;Kael;3;20;tuz
+kartya;Myra;2;20;fold
+kartya;Thalen;3;20;levego
+kartya;Isara;2;20;viz
+
+vilag;jatekmod
+
+stat;5;100
+
+nehezsegi_szint;10

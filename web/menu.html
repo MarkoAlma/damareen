@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0px;
+        }
+        body{
+            overflow: hidden;
+        }
+        .my_scene{
+            background: black;
+        }
+
+        .fomenu_scene {
+            font-family: monospace;
+            color: hsl(40, 70%, 85%);
+            text-shadow: 1px 1px 1px #1a1410;
+            background-image: url("fomenu_bg.png");
+            background-size: cover;
+            width: 100%;
+            height: 100vh;
+            transition: transform 2s ease-in;
+            display: flex;
+        }
+
+        .fomenu_scene .menu-title {
+            font-size: 120px;
+            letter-spacing: 2px;
+            margin: 0px;
+            position: absolute;
+            top: 50px;
+            right: 100px;
+            color: #ffffff; /* alap szín */
+            background: linear-gradient(45deg, #ff6b6b, #f0e130, #4ecdc4, #1a535c);
+            background-size: 400% 400%; /* animációhoz */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 10s ease infinite, titleGlow 4s ease-in-out infinite;
+            transition: opacity 0.5s ease;
+        }
+
+        /* lassú színátmenet animáció */
+        @keyframes gradientShift {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+
+        /* finom glow hatás */
+        @keyframes titleGlow {
+            0%, 100% {text-shadow: 0 0 5px rgba(255,255,255,0.3);}
+            50% {text-shadow: 0 0 20px rgba(255,255,255,0.6);}
+        }
+        .fomenu_scene .menu {
+            position: absolute;
+            top: 50%;
+            left: 7%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            transition: opacity 0.5s ease;
+        }
+
+        .fomenu_scene .menu button {
+            position: relative;
+            background: linear-gradient(145deg, #222, #000);
+            border: none;
+            border-radius: 12px;
+            color: hsl(40, 70%, 85%);
+            padding: 16px 36px;
+            font-size: 40px;
+            cursor: pointer;
+            overflow: hidden;
+            z-index: 1;
+            transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7), 0 5px 25px rgba(0, 0, 0, 0.7);
+        }
+
+        /* fénycsík animáció */
+        .fomenu_scene .menu button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            transform: rotate(45deg) translateX(-200%);
+            transition: transform 0.5s ease;
+            pointer-events: none;
+        }
+
+        .fomenu_scene .menu button:hover::before {
+            transform: rotate(45deg) translateX(200%);
+        }
+
+        /* hover effektek */
+        .fomenu_scene .menu button:hover {
+            background: linear-gradient(145deg, #333, #111);
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.8), 0 5px 35px rgba(0, 0, 0, 0.8);
+            transform: scale(1.05) rotateZ(1deg);
+            animation: shake 0.5s infinite;
+        }
+
+        /* shake effekt */
+        @keyframes shake {
+            0% { transform: scale(1.05) rotateZ(1deg) translateX(0px); }
+            25% { transform: scale(1.05) rotateZ(-1deg) translateX(-2px); }
+            50% { transform: scale(1.05) rotateZ(1deg) translateX(2px); }
+            75% { transform: scale(1.05) rotateZ(-1deg) translateX(-2px); }
+            100% { transform: scale(1.05) rotateZ(1deg) translateX(0px); }
+        }
+
+        
+
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 4px hsl(40, 70%, 85%); }
+            50% { text-shadow: 0 0 30px #f0d48a; }
+            100% { text-shadow: 0 0 4px hsl(40, 70%, 85%); }
+        }
+
+        .jatek_select_scene{
+            width: 100%;
+            height: 100vh;
+            background: radial-gradient(#333, #111);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .jatek_select_scene h1{
+            font-size: 120px;
+            letter-spacing: 2px;
+            margin: 0px 100px 0px 0px;
+            padding-top: 100px;
+            text-align: right;
+            color: #ffffff; /* alap szín */
+            background: linear-gradient(45deg, #ff6b6b, #f0e130, #4ecdc4, #1a535c);
+            background-size: 400% 400%; /* animációhoz */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .jatek_select_scene .jatek{
+            width: 20vw;
+            height: 60vh;
+        }
+        .jatek_select_scene .vissza{
+            width: 300px;
+            height: 200px;
+            cursor: pointer;
+        }
+
+
+        .bg_zoomed{
+            transform: scale(6);
+        }
+
+        .bg_unzoomed{
+            transform: scale(1);
+        }
+        .hidden{
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .kikapcsol{
+            display: none;
+        }
+
+        .scene_reveal {
+            animation: fadeInScene 2s ease forwards;
+        }
+
+        .scene_disappear{
+            animation: fadeOutScene 0.5s ease forwards;
+        }
+
+
+        @keyframes fadeInScene {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        @keyframes fadeOutScene {
+            0% {
+                opacity: 1;
+                background: radial-gradient(#333, #111);
+            }
+            100% {
+                opacity: 0;
+                background: black;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="my_scene">
+        <div class="fomenu_scene bg_unzoomed">
+            <h1 class="menu-title"><span>Damareen</span></h1>
+            <div class="menu">
+                <button onclick="Vilagok()">Játék</button>
+                <button onclick="">Example button</button>
+                <button onclick="">Example button2</button>
+            </div>
+        </div>
+        
+        <div class="jatek_select_scene kikapcsol hidden">
+            <h1>Játékmenet Kiválasztása</h1>
+            <div class="jatekok">
+                <div class="jatek">
+                    <p class="kazamatak">
+                        <span>egyszeru;Barlangi Portya;Nerun;sebzes</span>
+                        <span>kis;Osi Szentely;Arin,Emera,Selia;Lord Torak;eletero</span>
+                        <span>nagy;A melyseg kiralynoje;Liora,Arin,Selia,Nerun,Torak;Priestess</span>
+                    </p>
+                    <p class="kartyak">
+                        <span>Nerun</span>
+                        <span>Aragorn</span>
+                        <span>Selia</span>
+                        <span>Torak</span>
+                        <span>Myra</span>
+                    </p>
+                    <p class="vezer_kartyak">
+                        <span>Lord Torak</span>
+                        <span>Priestess Selia</span>
+                    </p>
+                </div>
+                <div class="jatek">
+                    <p class="kazamatak">
+                        <span>egyszeru;Barlangi Portya;Nerun;sebzes</span>
+                        <span>kis;Osi Szentely;Arin,Emera,Selia;Lord Torak;eletero</span>
+                        <span>nagy;A melyseg kiralynoje;Liora,Arin,Selia,Nerun,Torak;Priestess</span>
+                    </p>
+                    <p class="kartyak">
+                        <span>Nerun</span>
+                        <span>Aragorn</span>
+                        <span>Selia</span>
+                        <span>Torak</span>
+                        <span>Myra</span>
+                    </p>
+                    <p class="vezer_kartyak">
+                        <span>Lord Torak</span>
+                        <span>Priestess Selia</span>
+                    </p>
+                </div>
+                <div class="jatek">
+                    <p class="kazamatak">
+                        <span>egyszeru;Barlangi Portya;Nerun;sebzes</span>
+                        <span>kis;Osi Szentely;Arin,Emera,Selia;Lord Torak;eletero</span>
+                        <span>nagy;A melyseg kiralynoje;Liora,Arin,Selia,Nerun,Torak;Priestess</span>
+                    </p>
+                    <p class="kartyak">
+                        <span>Nerun</span>
+                        <span>Aragorn</span>
+                        <span>Selia</span>
+                        <span>Torak</span>
+                        <span>Myra</span>
+                    </p>
+                    <p class="vezer_kartyak">
+                        <span>Lord Torak</span>
+                        <span>Priestess Selia</span>
+                    </p>
+                </div>
+            </div>
+            <button class="vissza" onclick="VisszaLepes()">Vissza</button>
+        </div>
+    </div>
+    
+
+    
+</body>
+<script>
+
+        const menu = document.querySelector('.menu');
+        const title = document.querySelector('.menu-title');
+        const fomenu_scene = document.querySelector('.fomenu_scene');
+        const jatekScene = document.querySelector('.jatek_select_scene');
+
+        function Zoom(){
+
+            fomenu_scene.classList.remove("bg_unzoomed")
+
+            menu.classList.add('hidden');
+            title.classList.add('hidden');
+            setTimeout(() => {
+                fomenu_scene.classList.add('bg_zoomed');
+            }, 500);
+        }
+
+        function unZoom(){
+
+            fomenu_scene.classList.remove('bg_zoomed');
+            fomenu_scene.classList.add("bg_unzoomed")
+            
+
+            setTimeout(() => {
+                menu.classList.remove("hidden");
+                title.classList.remove('hidden');
+            }, 2000);
+        }
+
+
+        function Vilagok() {
+            Zoom()
+            setTimeout(() => {
+                jatekScene.classList.remove("scene_disappear")
+                fomenu_scene.classList.add("kikapcsol")
+
+                jatekScene.classList.remove("kikapcsol")
+                jatekScene.classList.remove("hidden")
+                jatekScene.classList.add('scene_reveal')
+            }, 2500);
+        } 
+
+        function VisszaLepes() {      
+            
+            jatekScene.classList.add("scene_disappear")
+
+            setTimeout(() => {
+                jatekScene.classList.add("kikapcsol")
+                fomenu_scene.classList.remove("kikapcsol")
+
+                setTimeout(() => {
+                    unZoom()
+                }, 500);
+            }, 500);
+
+            
+        }
+
+    </script>
+</html>
