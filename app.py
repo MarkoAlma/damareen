@@ -393,7 +393,7 @@ class API:
 
         # Új ablak létrehozása HIDDEN-ben
         #window = webview.create_window("Damareen", r"C:\kapros\web\index.html", hidden=True, on_top=False, width=0, height=0, js_api=api)
-        new_window = webview.create_window("Damareen", r"D:\wtf\dusza\dusza 2\web\index.html", hidden=True, on_top=False, width=0, height=0, js_api=api)
+        new_window = webview.create_window("Damareen", r"C:\verseny\web\index.html", hidden=True, on_top=False, width=0, height=0, js_api=api)
 
         # Ha betöltött → aktiváljuk és bezárjuk a régit
         def on_loaded():
@@ -1132,8 +1132,17 @@ if kapcsolo == "teszt":
                     f.write("\n")
                 if kazamatak:
                     for kazamata in kazamatak:
-                        ellenfelek_str = ",".join(kazamata.ellenfelek)
-                        f.write(f"kazamata;{kazamata.tipus};{kazamata.nev};{ellenfelek_str};{kazamata.jutalom}\n")
+                        if(kazamata.tipus == "kis"):
+                            ellenfelek_str = ",".join(kazamata.ellenfelek[0:-1])
+                            
+                            f.write(f"kazamata;{kazamata.tipus};{kazamata.nev};{ellenfelek_str};{kazamata.ellenfelek[-1]};{kazamata.jutalom}\n")
+                        elif kazamata.tipus == "nagy":
+                            ellenfelek_str = ",".join(kazamata.ellenfelek[0:-1])
+                            
+                            f.write(f"kazamata;{kazamata.tipus};{kazamata.nev};{ellenfelek_str};{kazamata.ellenfelek[-1]}\n")
+                        else:
+                            ellenfelek_str = ",".join(kazamata.ellenfelek)
+                            f.write(f"kazamata;{kazamata.tipus};{kazamata.nev};{ellenfelek_str};{kazamata.jutalom}\n")
                 f.close()
             elif adat[0] == "export jatekos":
                 if "txt" != adat[1][-3:]:
@@ -1168,6 +1177,5 @@ if kapcsolo == "teszt":
     
 if kapcsolo != "teszt":
     api = API()
-    #window = webview.create_window("Damareen", r"C:\kapros\web\index.html", hidden=True, on_top=False, width=0, height=0, js_api=api)
-    window = webview.create_window("Damareen", r"D:\wtf\dusza\dusza 2\web\index.html", hidden=True, on_top=False, width=0, height=0, js_api=api)
+    window = webview.create_window("Damareen", r"C:\verseny\web\index.html", hidden=True, on_top=False, width=0, height=0, js_api=api)
     create_window()

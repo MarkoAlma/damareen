@@ -1,4 +1,4 @@
-uj kartya;Arin;2;5;fold;['10', '4', '5', '0']
+uj kartya;Arin;2;5;fold;['10', '7', '5', '0']
 uj kartya;Liora;2;4;levego;['7', '2', '3', '0']
 uj kartya;Nerun;3;3;tuz;['5', '3', '2', '0']
 uj kartya;Selia;2;6;viz;['10', '4', '5', '1']
