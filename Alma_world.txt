@@ -1,0 +1,19 @@
+uj kartya;fhdfhdfg;2;1;tuz;['7', '10', '3', '0']
+uj kartya;hfgdhfghfg;2;1;tuz;['9', '7', '5', '0']
+uj kartya;barack;2;1;tuz;['5', '3', '6', '0']
+uj kartya;kutyuska;25;100;tuz;['1', '1', '1', '1']
+uj kartya;ugrfuiq;24;1;levego;['6', '8', '8', '0']
+uj kartya;ghdf;25;15;fold;['5', '4', '10', '1']
+uj kartya;ijijisfgls;24;14;viz;['3', '10', '9', '0']
+uj vezer;gdfgdf;100;100;fold;['8', '5', '3', '1']
+uj vezer;körte;21;15;tuz;['5', '9', '7', '0']
+uj vezer;beka;23;14;tuz;['3', '3', '6', '1']
+uj vezer;pingvin;29;51;tuz;['10', '6', '8', '0']
+uj kazamata;egyszeru;ninja;fhdfhdfg;eletero
+uj kazamata;kis;ninjajbdfjjnlbdf;fhdfhdfg,barack,ijijisfgls;beka;sebzes
+uj kazamata;nagy;ninjajbdfjjnlbdfghdg;fhdfhdfg,barack,hfgdhfghfg,ghdf,ijijisfgls;pingvin
+felvetel gyujtemenybe;fhdfhdfg
+felvetel gyujtemenybe;barack
+felvetel gyujtemenybe;kutyuska
+felvetel gyujtemenybe;ghdf
+felvetel gyujtemenybe;ijijisfgls

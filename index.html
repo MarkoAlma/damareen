@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Fullscreen Játék</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <audio id="gameMusic1">
+        <source src="zenek/mainscreen/main1.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="gameMusic2">
+        <source src="zenek/mainscreen/main2.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="gameMusic3">
+        <source src="zenek/mainscreen/main3.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="gameMusic4">
+        <source src="zenek/mainscreen/main4.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="gameMusic5">
+        <source src="zenek/mainscreen/main5.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <div class="karakterke nelatszon">
+    <div class="karakterke_urlap">
+    <h1 class="ideirok">Karakter kreálás</h1>
+    <label>Név:</label>  
+    <input type="text" id="letrehozoName" maxlength="16" placeholder="Név" oninput="nevChange(this.value)">
+    <label>Sebzés:</label>  
+    <input type="number" id="letrehozoSebzes" min="2" max="100" value="2" placeholder="Írd be a sebzést" oninput="sebzesChange(this.value)">
+    <label>Életerő:</label>  
+    <input type="number" id="letrehozoEletero" min="1" max="100" value="1" placeholder="Írd be az életerőt" oninput="eleteroChange(this.value)">
+    <label>Elem:</label>
+      <select id="elementSelect">
+          <option value="tuz">Tűz</option>
+          <option value="viz">Víz</option>
+          <option value="fold">Föld</option>
+          <option value="levego">Levegő</option>
+      </select>
+      <div class="testresz_select">
+        <div>
+          <label for="gender">Válassz nemet:</label>
+          <select id="gender">
+              <option value="male">Férfi</option>
+              <option value="female">Női</option>
+          </select>
+      </div>
+      <div>
+          <label class="karakterke_testresz">Fej:</label>
+          <button id="headPrev">◀</button>
+          <span id="headIndex">1</span>
+          <button id="headNext">▶</button>
+      </div>
+
+      <div>
+          <label class="karakterke_testresz">Törzs:</label>
+          <button id="bodyPrev">◀</button>
+          <span id="bodyIndex">1</span>
+          <button id="bodyNext">▶</button>
+      </div>
+
+      <div>
+          <label class="karakterke_testresz">Láb:</label>
+          <button id="legsPrev">◀</button>
+          <span id="legsIndex">1</span>
+          <button id="legsNext">▶</button>
+      </div>
+      <input type="radio" name="fajta" value="normal" checked>Normál <br>
+      <input type="radio" name="fajta" value="vezer"> Vezér <br>
+      </div>
+
+      
+      
+
+    </div>
+    <button onclick="randomKepGeneralas()" class="karakterke_urlap_gomb">Random</button>
+    <button onclick="karatker_kimentes_meghivo()" class="karakterke_urlap_gomb">Mentés</button>
+    <!-- Szem és haj színválasztó -->
+           <!-- <div class="kozepeske">
+        <canvas id="characterCanvas2" width="500" height="600"></canvas>
+      </div> -->
+    <div class="kozepeskeNagy">
+
+      <div class="kozepeskeJobb">
+        <section class="fade card felsokoz nagycard hoverelheto">
+            <span class='szamSzinez'></span>
+             <div class="corner top left"></div>
+             <div class="corner top right"></div>
+             <div class="corner bottom left"></div>
+             <div class="corner bottom right"></div>
+          <figure class="figure figure-leshen kintiKartya kintiKartya2 tuzi">
+            <!-- <img class='monsimg  leshenpng' src="https://i.ibb.co/2Y6Q12G2/image-removebg-preview.png" alt="leshen" > -->
+             <div class="canvas3igazitas"><canvas id="characterCanvas3" width="500" height="100"></canvas></div>
+          </figure>
+          <div class="szeles">
+            <div class="content">
+              <div class="nevBerak nevBerak2">Név</div>
+            </div>
+          </div>
+          <footer class="footer footer-leshen">
+            <div class="details">
+              <p class="kartyaSzoveg sebzesBerak">⚔️2</p>
+            </div>
+                  <div class="details elsoDetail">
+              <img class="elem-icon icon-elonezet elem-icon2" src="tuz.png" alt="">
+            </div>
+            <div class="details">
+              <p class="kartyaSzoveg jobboldal eleteroBerak">1❤️</p>
+            </div>
+          </footer>
+        </section>
+      </div>
+    </div>
+    </div>
+
+    <div id="simplePopup">
+        <div id="popupContent">
+            <h1>Alap és Ajánlott játékmód közötti különbségek</h1>
+            <p>Ajánlott módban nagy kazamata jutalmaként bármelyik kártyát kinyithatod (Vezérkártyákon kívül) és abban az esetben, ha olyat kártyát nyitsz ami már megvolt, akkor a kártya kombinálódik és ezáltal fejlődik az életereje 2-vel és a sebzése 1-gyel.</p>
+            <p>Ajánlott módban vannak a kazamattátknak (pályáknak) elemei, amit a kazamatta vezérének az eleme határoz meg (abban az esetben, ha kis vagy nagy kazamatát indítassz). A pálya eleme befolyásolja a kártyáknak a sebzését. Ha a támadó kártya eleme megegyezik a pálya elemével az 2x sebzésbónusz, ha a támadó kártya eleme gyenge a pálya elemére az 0.5x sebzésbónusz (más esetben változatlan).</p>
+        </div>
+    </div>
+
+    <div class="sugo">?</div>
+
+    <div class="my_scene">
+        <div class="kezdo_scene"><img src="./headphone.png" alt=""><h1>Fejhallgató használata erősen ajánlott!</h1></div>
+
+
+        <div class="fomenu_scene bg_unzoomed ">
+            <div class="b_ujjatek" onclick="Vilagok('ujjatek')">Új Játék</div>
+            <div class="b_folytatas" onclick="Vilagok('folytatas')">Folytatás</div>
+            <div class="b_vilag-letrehoz" onclick="Vilagok('vilag')">Világ létrehozása</div>
+            <div class="exitbutton" onclick="ExitApp()">Kilépés</div>
+        </div>
+
+        <div class="ujjatek_scene kikapcsol bg_unzoomed">
+            <h1 class="select_title">Világ Kiválasztása</h1>
+            <input type="text" id="saveName" placeholder="Mentés neve:">
+            <img src="./input_bg.png" alt="" class="input_bg">
+            <img src="./fire.gif" alt="" class="tuz">
+            <img src="./teszt3.gif" alt="" class="portal">
+            <div class="balra" onclick="handleVilagChange('bal')"><img src="./energy_arrow.png" alt=""></div>
+            <div class="jobbra" onclick="handleVilagChange('jobb')"><img src="./energy_arrow.png" alt=""></div>
+            <div class="jatekok">
+                
+            </div>
+            <div class="nehez">
+                <label for="nehezseg">Nehézség:</label>
+                <input type="range" value="0" min="0" max="10" id="nehezseg" oninput="HandleNehezseg(this.value)">
+                <label class="nehezsegSzin" for="nehezseg">0</label>
+            </div>
+            <div class="alapmod">Alap mód</div>
+            <div class="kapcsolo">
+                <label class="switch" >
+                    <input type="checkbox" onclick="HandleJatekmodChange()">
+                    <span class="slider round" ></span>
+                </label>
+            </div>
+            <div class="komolymod">Javasolt mód</div>
+            <div class="folytat" onclick="CreateWorld('ujjatek')">
+                <button>Folytatás</button>
+            </div>
+            <div class="vissza" onclick="VisszaLepes('ujjatek')">
+                <button>Vissza</button>
+            </div>
+        </div>
+
+        <div class="folytatas_scene kikapcsol bg_unzoomed">
+            <h1 class="select_title">Játékmenet Betöltése</h1>
+            <img src="./fire.gif" alt="" class="tuz">
+            <img src="./teszt3.gif" alt="" class="portal">
+            <div class="balra" onclick="handleMentesChange('bal')"><img src="./energy_arrow.png" alt=""></div>
+            <div class="jobbra" onclick="handleMentesChange('jobb')"><img src="./energy_arrow.png" alt=""></div>
+            <div class="mentesek">
+                
+            </div>
+            <div class="folytat" onclick="CreateWorld('folytatas')">
+                <button>Folytatás</button>
+            </div>
+            <div class="vissza" onclick="VisszaLepes('folytatas')">
+                <button>Vissza</button>
+            </div>
+        </div>
+
+        <div class="jatek-popup-overlay">
+        <div class="popup-content">
+            <span class="close"  onclick="mentesmentesInfo('jatek')">&times;</span>
+            <h1>Világ információ</h1>
+                <div class="jatek-popup">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="mentes-popup-overlay">
+        <div class="popup-content">
+            <span class="close"  onclick="mentesmentesInfo('mentes')">&times;</span>
+            <h1>Mentés információ</h1>
+                <div class="mentes-popup">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="vilagselect_scene kikapcsol bg_unzoomed ">
+            <h1 class="select_title">Világ Létrehozása</h1>
+            <!-- <div style="background-color:red"> <canvas id="characterCanvas2" width="500" height="600"></canvas></div> -->
+            <img src="./urlap_hatter.png" alt="" class="urlap_hatter">
+            <div class="urlap">
+                <div>
+                    <h3>Világ beállításai</h3>
+                    <input type="text" placeholder="Világ neve: " oninput="HozzaadasVilag('nev')" class="vilagnev">
+                </div>
+                <div>
+                    <h3>Játékos gyűjtemény kártyái: </h3>
+                    <select name="" id="" class="gyujtemenySelect">
+                        
+                    </select> 
+                    <button onclick="HozzaadasVilag('gyujtemeny')">Hozzáadás</button>
+                </div>
+                <div>
+                    <h3 class="atiro">Kazamata hozzáadása</h3>
+                    <input type="text" placeholder="Kazamata neve: " class="kazamatanev"> <br>
+                    <label for="tipus_select">Kazamata Típusa: </label>
+                    <select name="" id="tipus_select" class="tipusSelect" onchange="EllenfelekSlotok(event.target.value)">
+                        <option value="egyszeru">Egyszerű</option>
+                        <option value="kis">Kis</option>
+                        <option value="nagy">Nagy</option>
+                    </select>
+                    <div class="kartyakSelect">
+                        <p>Kártya kiválasztása: </p>
+                        <select name="" class="kazamataKartya1">
+                            
+                        </select>
+                    </div>
+                    <div class="jutalmak">
+                        <label for="tipus_select">Jutalom: </label>
+                        <select name="" class="jutalomSelect">
+                            <option value="sebzes">Sebzés</option>
+                            <option value="eletero">Életerő</option>
+                        </select>
+                    </div>
+                    <button onclick="HozzaadasVilag('kazamata')">Hozzáadás</button>
+                    <button id="openPopup">Megnyitás</button>
+                    <button onclick="VilagLetrehozas()">Világ létrehozása</button>
+                    </div>
+                    <div class="status"></div>
+                </div>
+                <img src="./fire.gif" alt="" class="tuz">
+                <div class="vissza" onclick="VisszaLepes('vilag')">
+                    <button>Vissza</button>
+                </div>
+                <div class="folytat" onclick="VilagkartyakScene()">
+                    <button>Világkártyák</button>
+                </div>
+                
+        </div>
+
+        <div class="Vilagkartya_scene bg_unzoomed kikapcsol">
+                     <div class="kozepeske">
+        <canvas id="characterCanvas2" width="500" height="600"></canvas>
+      </div>
+          <div class="vilagkar">
+          
+          </div>
+            <img src="./fire.gif" alt="" class="tuz">
+            
+            <div class="vissza" onclick="VilagCreateScene()">
+                <button>Vissza</button>
+            </div>
+            <div class="folytat" onclick="kartya_krealas()">
+                <button onclick="uj_kartya_gomb()">Új kártya</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span id="closePopup" class="close">&times;</span>
+            <h1>A világ jelenlegi statisztikái</h1>
+                <div class="currentVilag">
+                    <p style="margin-bottom: 3vh;">Név: <span class="currentnev"></span></p>
+                    <p>Játékos gyűjtemény: <div class="currentgyujtemeny"></div></p>
+                    <p>Kazamaták: <div class="currentkazamatak"></div></p>
+                </div>
+        </div>
+    </div>
+
+    <div class="main nelatszon">
+      <div class="statok"></div>
+      <img src="./teszt3.gif" alt="" class="kartyaportalocskaamiamainbenvanastatokalattesakintifelett">
+      <div class="kinti">
+        <div class="kartyak">
+
+        </div>
+      </div>
+      <div class="kazamatak2">
+          <div class="bodi">
+    <div class="konyv tarolo">
+
+    <div class="sprite-wrapper">
+        <div class="book">
+        <!--  Carousel container -->
+        <div class="carousel" style="--slides: 4;">
+            <!--  Bg sprite -->
+            <div class="sprite"></div>
+            <!--  Carousel items -->
+
+        </div>
+        </div>
+        </div>
+  </div>
+  </div>
+      </div>
+
+      <div class="vissza" onclick="BackToSelect('folytatas')">
+            <button>Főmenü</button>
+        </div>
+
+    </div>
+
+
+    <div class="harcmezo nelatszon">
+        <div class="harcallas"></div>
+      <div class="jutalom"></div>
+      <div class="meccsVegeGomb" onclick="tovabb()">Tovább</div>
+      <div class="mezofelso"></div>
+      <div class="mezokozepso">
+        <div class="kozepKisMezok" id="kozep1"></div>
+        <div class="kozepKisMezok" id="kozep2"></div>
+        <div class="kozepKisMezok" id="kozep3"></div>
+        <div class="kozepKisMezok" id="kozep4"></div>
+        <div class="kozepKisMezok" id="kozep5"></div>
+        <div class="kozepKisMezok" id="kozep6"></div>
+      </div>
+      <div class="mezoalso"></div>
+    </div>
+        <div class="hibaJelzo" onclick="hibaJelzoEltunteto()">
+          <div class="hibaJelzoSzoveg"></div>
+        </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

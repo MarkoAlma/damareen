@@ -2650,3 +2650,4 @@ transition: 0.5s;
 .jobboldaliGif.active, .baloldaliGif.active {
   animation: fadeIn 2s ease-in-out forwards;
 }
+

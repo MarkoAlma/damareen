@@ -1216,17 +1216,9 @@ function VilagkartyakScene(){
                 jatekScene.classList.remove("kikapcsol")
             }, 2000);
         }else if(opcio == 'folytatas'){
-            document.querySelector(".main").classList.add("scene_disappear")
-            setTimeout(() => {
-              document.querySelector(".main").classList.add("nelatszon")
-              document.querySelector(".my_scene").classList.remove("nelatszon")
-              mentesScene.classList.add("scene_reveal")
-              mentesScene.classList.add("bg_unzoomed")
-              mentesScene.classList.remove('bg_zoomed');
-              mentesScene.classList.remove('scene_disappear');
-              mentesScene.classList.remove("kikapcsol")
+   
               window.pywebview.api.reloadpage()
-            }, 1500);
+            
         }else if(opcio == 'vilag'){
             VilagScene.classList.add("scene_reveal")
             VilagScene.classList.add("bg_unzoomed")
@@ -2173,8 +2165,11 @@ function CreateWorld(opcio){
                                     valamiHeight = dimensions.segedHeight*1.1
                                     break;
                                 case "10":
-                                    width = dimensions.bodyWidth*1.14
-                                    height = dimensions.bodyHeight*1.14
+                                    width = dimensions.bodyWidth*1.2
+                                    height = dimensions.bodyHeight*1.2
+                                    
+                                    valamiWidth = dimensions.segedWidth*1.2
+                                    valamiHeight = dimensions.segedHeight*0.5 
                                     break;
                                 default:
                                     console.log("Érvénytelen szám");
@@ -2182,11 +2177,12 @@ function CreateWorld(opcio){
                             break;
                         
                         default:
+
                             console.log("Érvénytelen nem");
                     }
                     
                     if (animationActive && animImage.complete && (canvasNev == 'kanvasjobb' || canvasNev =='kanvasbal')) {
-
+                        
                         const frame = animationFrame;
 
                         const col = frame % animMaxCols;
@@ -2235,7 +2231,7 @@ function CreateWorld(opcio){
               // let canvas3 = document.getElementById(canvasNev)
               // let ctx3 = canvas3.getContext("2d");
               document.getElementById(canvasNev).width = canvas2.width
-              document.getElementById(canvasNev).height = canvas2.height
+              document.getElementById(canvasNev).height = canvas2.height 
               // document.querySelector(".barackoska").innerHTML += `${canvasNev}`;
               document.getElementById(canvasNev).getContext("2d").clearRect(0, 0, document.getElementById(canvasNev).width, document.getElementById(canvasNev).height);
               document.getElementById(canvasNev).getContext("2d").drawImage(canvas2, 0, 0);
@@ -2703,7 +2699,7 @@ function animationLoop(nem, fej, test, lab, futtasa, canvasNev,jatekosE,gif) {
     // Ha elértük a megfelelő időt, növeljük a frame számot
     if (now - lastFrameTime >= FRAME_TIME) {
         animationFrame++;
-        const proba = animTotalFrames * 0.85
+        const proba = animTotalFrames -10
         if (animationFrame >= proba  && gifMehetE){
           gifMehetE = false
             if (!jatekosE) {

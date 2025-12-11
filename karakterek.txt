@@ -1,3 +1,13 @@
 kartya;fhdfhdfg;2;1;tuz;7;10;3;0
 kartya;hfgdhfghfg;2;1;tuz;9;7;5;0
 vezer;gdfgdf;100;100;fold;8;5;3;1
+kartya;barack;2;1;tuz;5;3;6;0
+vezer;körte;21;15;tuz;5;9;7;0
+vezer;beka;23;14;tuz;3;3;6;1
+vezer;pingvin;29;51;tuz;10;6;8;0
+kartya;kutyuska;25;100;tuz;1;1;1;1
+kartya;ugrfuiq;24;1;levego;6;8;8;0
+kartya;ghdf;25;15;fold;5;4;10;1
+kartya;ijijisfgls;24;14;viz;3;10;9;0
+vezer;lio;2;1;levego;6;6;1;0
+kartya;alma;23;12;tuz;5;7;4;1

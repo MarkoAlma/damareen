@@ -1,0 +1,10 @@
+kartya;fhdfhdfg;2;1;tuz
+kartya;barack;2;1;tuz
+kartya;kutyuska;26;100;tuz
+kartya;ghdf;25;15;fold
+kartya;ijijisfgls;24;14;viz
+
+vilag;Alma
+stat;3;1
+nehezsegi_szint;3
+mod;ajanlott

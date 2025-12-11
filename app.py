@@ -393,19 +393,44 @@ class API:
 
         # Új ablak létrehozása HIDDEN-ben
         #window = webview.create_window("Damareen", r"C:\kapros\web\index.html", hidden=True, on_top=False, width=0, height=0, js_api=api)
-        new_window = webview.create_window("Damareen", r"C:\verseny\web\index.html", hidden=True, on_top=False, width=0, height=0, js_api=api)
+        new_window = webview.create_window("Damareen", r"C:\Users\Diák17\damareen\damareen\web\index.html", hidden=True, on_top=False, width=0, height=0, js_api=api)
 
         # Ha betöltött → aktiváljuk és bezárjuk a régit
         def on_loaded():
             new_window.show()
             new_window.toggle_fullscreen()
             old_window.destroy()
+            
 
         # callback regisztrálása az új ablakra
         new_window.events.loaded += on_loaded
 
         # átállítjuk a globált az új ablakra
         window = new_window
+        global harc_menete, letezo_kartyak, vezer_kartyak, jatekos_gyujtemeny, kazamatak, mostani_pakli
+        global keszitett_fajl_neve, kapcsolo, full_uj_jatek, mentesi_fajl_neve, jatekvilag_neve
+        global nehezsegi_szint, mod, kazamata_elem, win, loss
+        
+        harc_menete = []
+        letezo_kartyak = []
+        vezer_kartyak = []
+        jatekos_gyujtemeny = []
+        kazamatak = []
+        mostani_pakli = ""
+        keszitett_fajl_neve = ""
+        kapcsolo = ""
+        #pontos_hely = r"C:\kapros"
+        # pontos_hely = r"D:\wtf\dusza\dusza 2"
+        full_uj_jatek = False
+        mentesi_fajl_neve = ""
+        jatekvilag_neve = ""
+        nehezsegi_szint = 10
+        mod = "alap"
+        # mod = "ajanlott"
+        kazamata_elem = "normal"
+
+        win = 0
+        loss = 0
     def vilag_kimentese(self, nev, normal_kartyak, vezer_kartyak, tombocske, currentgyujtemeny):
         print("Világ mentése:", nev)
         try:
@@ -1177,5 +1202,5 @@ if kapcsolo == "teszt":
     
 if kapcsolo != "teszt":
     api = API()
-    window = webview.create_window("Damareen", r"C:\verseny\web\index.html", hidden=True, on_top=False, width=0, height=0, js_api=api)
+    window = webview.create_window("Damareen", r"C:\Users\Diák17\damareen\damareen\web\index.html", hidden=True, on_top=False, width=0, height=0, js_api=api)
     create_window()
